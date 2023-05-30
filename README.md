@@ -19,3 +19,8 @@
 **Tier 3**
 - armv5te-unknown-linux-gnueabi
 - armv7-unknown-linux-gnueabi
+
+
+### MSRV
+
+1.40.0
