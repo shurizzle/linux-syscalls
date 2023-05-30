@@ -19,7 +19,12 @@ pub use init::{init_from_args, init_from_environ};
 
 #[cfg(all(target_os = "linux", outline_syscalls))]
 #[cfg_attr(
-    any(target_arch = "x86_64", target_arch = "aarch64", target_arch = "arm"),
+    any(
+        target_arch = "x86_64",
+        target_arch = "aarch64",
+        target_arch = "arm",
+        target_arch = "riscv64"
+    ),
     path = "outline/common.rs"
 )]
 #[cfg_attr(target_arch = "x86", path = "outline/x86.rs")]
@@ -31,6 +36,7 @@ mod arch;
 #[cfg_attr(target_arch = "aarch64", path = "inline/aarch64.rs")]
 #[cfg_attr(target_arch = "x86_64", path = "inline/x86_64.rs")]
 #[cfg_attr(target_arch = "x86", path = "inline/x86.rs")]
+#[cfg_attr(target_arch = "riscv64", path = "inline/riscv64.rs")]
 mod arch;
 
 #[cfg(all(
@@ -39,7 +45,8 @@ mod arch;
         target_arch = "x86_64",
         target_arch = "x86",
         target_arch = "aarch64",
-        target_arch = "arm"
+        target_arch = "arm",
+        target_arch = "riscv64"
     )
 ))]
 pub use arch::{
@@ -56,7 +63,8 @@ pub use arch::{syscall7, syscall7_readonly};
         target_arch = "x86_64",
         target_arch = "x86",
         target_arch = "aarch64",
-        target_arch = "arm"
+        target_arch = "arm",
+        target_arch = "riscv64"
     )
 ))]
 #[macro_export]

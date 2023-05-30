@@ -14,6 +14,7 @@
 - arm-unknown-linux-gnueabihf
 - armv7-unknown-linux-gnueabihf
 - thumbv7neon-unknown-linux-gnueabihf
+- riscv64gc-unknown-linux-gnu
 
 **Tier 3**
 - armv5te-unknown-linux-gnueabi

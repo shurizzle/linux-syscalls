@@ -12,7 +12,7 @@
 // |    x0    | x0, x1, x2, x3, x4, x5, x6, x7 |    stack RTL      |
 // +----------+--------------------------------+-------------------+
 //
-// Registers are the same, we just need to copy last argument (sysno) with x8.
+// Registers are the same, we just need to copy last argument (sysno) in x8.
 
   .text
 

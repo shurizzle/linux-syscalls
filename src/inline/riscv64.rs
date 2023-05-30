@@ -6,9 +6,9 @@ use core::arch::asm;
 pub unsafe fn syscall0(sysno: Sysno) -> Result<usize, Errno> {
     let ret;
     asm!(
-        "svc 0",
-        in("x8") sysno as usize,
-        lateout("x0") ret,
+        "ecall",
+        in("a7") sysno as usize,
+        lateout("a0") ret,
         options(nostack, preserves_flags, readonly)
     );
     Errno::from_ret(ret)
@@ -20,9 +20,9 @@ pub use syscall0 as syscall0_readonly;
 pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
     let ret;
     asm!(
-        "svc 0",
-        in("x8") sysno as usize,
-        inlateout("x0") arg0 => ret,
+        "ecall",
+        in("a7") sysno as usize,
+        inlateout("a0") arg0 => ret,
         options(nostack, preserves_flags)
     );
     Errno::from_ret(ret)
@@ -32,9 +32,9 @@ pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
 pub unsafe fn syscall1_readonly(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
     let ret;
     asm!(
-        "svc 0",
-        in("x8") sysno as usize,
-        inlateout("x0") arg0 => ret,
+        "ecall",
+        in("a7") sysno as usize,
+        inlateout("a0") arg0 => ret,
         options(nostack, preserves_flags, readonly)
     );
     Errno::from_ret(ret)
@@ -43,10 +43,10 @@ pub unsafe fn syscall1_readonly(sysno: Sysno, arg0: usize) -> Result<usize, Errn
 #[inline]
 pub unsafe fn syscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
     asm!(
-        "svc 0",
-        "brk 1",
-        in("x8") sysno as usize,
-        in("x0") arg0,
+        "ecall",
+        "unimp",
+        in("a7") sysno as usize,
+        in("a0") arg0,
         options(noreturn)
     )
 }
@@ -55,10 +55,10 @@ pub unsafe fn syscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
 pub unsafe fn syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
     let ret;
     asm!(
-        "svc 0",
-        in("x8") sysno as usize,
-        inlateout("x0") arg0 => ret,
-        in("x1") arg1,
+        "ecall",
+        in("a7") sysno as usize,
+        inlateout("a0") arg0 => ret,
+        in("a1") arg1,
         options(nostack, preserves_flags)
     );
     Errno::from_ret(ret)
@@ -68,10 +68,10 @@ pub unsafe fn syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, 
 pub unsafe fn syscall2_readonly(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
     let ret;
     asm!(
-        "svc 0",
-        in("x8") sysno as usize,
-        inlateout("x0") arg0 => ret,
-        in("x1") arg1,
+        "ecall",
+        in("a7") sysno as usize,
+        inlateout("a0") arg0 => ret,
+        in("a1") arg1,
         options(nostack, preserves_flags, readonly)
     );
     Errno::from_ret(ret)
@@ -86,11 +86,11 @@ pub unsafe fn syscall3(
 ) -> Result<usize, Errno> {
     let ret;
     asm!(
-        "svc 0",
-        in("x8") sysno as usize,
-        inlateout("x0") arg0 => ret,
-        in("x1") arg1,
-        in("x2") arg2,
+        "ecall",
+        in("a7") sysno as usize,
+        inlateout("a0") arg0 => ret,
+        in("a1") arg1,
+        in("a2") arg2,
         options(nostack, preserves_flags)
     );
     Errno::from_ret(ret)
@@ -105,11 +105,11 @@ pub unsafe fn syscall3_readonly(
 ) -> Result<usize, Errno> {
     let ret;
     asm!(
-        "svc 0",
-        in("x8") sysno as usize,
-        inlateout("x0") arg0 => ret,
-        in("x1") arg1,
-        in("x2") arg2,
+        "ecall",
+        in("a7") sysno as usize,
+        inlateout("a0") arg0 => ret,
+        in("a1") arg1,
+        in("a2") arg2,
         options(nostack, preserves_flags, readonly)
     );
     Errno::from_ret(ret)
@@ -125,12 +125,12 @@ pub unsafe fn syscall4(
 ) -> Result<usize, Errno> {
     let ret;
     asm!(
-        "svc 0",
-        in("x8") sysno as usize,
-        inlateout("x0") arg0 => ret,
-        in("x1") arg1,
-        in("x2") arg2,
-        in("x3") arg3,
+        "ecall",
+        in("a7") sysno as usize,
+        inlateout("a0") arg0 => ret,
+        in("a1") arg1,
+        in("a2") arg2,
+        in("a3") arg3,
         options(nostack, preserves_flags)
     );
     Errno::from_ret(ret)
@@ -146,12 +146,12 @@ pub unsafe fn syscall4_readonly(
 ) -> Result<usize, Errno> {
     let ret;
     asm!(
-        "svc 0",
-        in("x8") sysno as usize,
-        inlateout("x0") arg0 => ret,
-        in("x1") arg1,
-        in("x2") arg2,
-        in("x3") arg3,
+        "ecall",
+        in("a7") sysno as usize,
+        inlateout("a0") arg0 => ret,
+        in("a1") arg1,
+        in("a2") arg2,
+        in("a3") arg3,
         options(nostack, preserves_flags, readonly)
     );
     Errno::from_ret(ret)
@@ -168,13 +168,13 @@ pub unsafe fn syscall5(
 ) -> Result<usize, Errno> {
     let ret;
     asm!(
-        "svc 0",
-        in("x8") sysno as usize,
-        inlateout("x0") arg0 => ret,
-        in("x1") arg1,
-        in("x2") arg2,
-        in("x3") arg3,
-        in("x4") arg4,
+        "ecall",
+        in("a7") sysno as usize,
+        inlateout("a0") arg0 => ret,
+        in("a1") arg1,
+        in("a2") arg2,
+        in("a3") arg3,
+        in("a4") arg4,
         options(nostack, preserves_flags)
     );
     Errno::from_ret(ret)
@@ -191,13 +191,13 @@ pub unsafe fn syscall5_readonly(
 ) -> Result<usize, Errno> {
     let ret;
     asm!(
-        "svc 0",
-        in("x8") sysno as usize,
-        inlateout("x0") arg0 => ret,
-        in("x1") arg1,
-        in("x2") arg2,
-        in("x3") arg3,
-        in("x4") arg4,
+        "ecall",
+        in("a7") sysno as usize,
+        inlateout("a0") arg0 => ret,
+        in("a1") arg1,
+        in("a2") arg2,
+        in("a3") arg3,
+        in("a4") arg4,
         options(nostack, preserves_flags, readonly)
     );
     Errno::from_ret(ret)
@@ -215,14 +215,14 @@ pub unsafe fn syscall6(
 ) -> Result<usize, Errno> {
     let ret;
     asm!(
-        "svc 0",
-        in("x8") sysno as usize,
-        inlateout("x0") arg0 => ret,
-        in("x1") arg1,
-        in("x2") arg2,
-        in("x3") arg3,
-        in("x4") arg4,
-        in("x5") arg5,
+        "ecall",
+        in("a7") sysno as usize,
+        inlateout("a0") arg0 => ret,
+        in("a1") arg1,
+        in("a2") arg2,
+        in("a3") arg3,
+        in("a4") arg4,
+        in("a5") arg5,
         options(nostack, preserves_flags)
     );
     Errno::from_ret(ret)
@@ -240,14 +240,14 @@ pub unsafe fn syscall6_readonly(
 ) -> Result<usize, Errno> {
     let ret;
     asm!(
-        "svc 0",
-        in("x8") sysno as usize,
-        inlateout("x0") arg0 => ret,
-        in("x1") arg1,
-        in("x2") arg2,
-        in("x3") arg3,
-        in("x4") arg4,
-        in("x5") arg5,
+        "ecall",
+        in("a7") sysno as usize,
+        inlateout("a0") arg0 => ret,
+        in("a1") arg1,
+        in("a2") arg2,
+        in("a3") arg3,
+        in("a4") arg4,
+        in("a5") arg5,
         options(nostack, preserves_flags, readonly)
     );
     Errno::from_ret(ret)

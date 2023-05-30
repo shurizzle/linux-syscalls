@@ -15,6 +15,9 @@ aarch64)
 arm)
 	MARCH="arm"
 	;;
+riscv64)
+	MARCH="riscv64"
+	;;
 *)
 	echo "arch $1 unsupported" >&2
 	exit 1
