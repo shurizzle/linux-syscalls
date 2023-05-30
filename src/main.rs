@@ -77,28 +77,27 @@ fn panic(info: &core::panic::PanicInfo) -> ! {
     unsafe { syscall!([!] Sysno::exit, 1) }
 }
 
-#[cfg(target_pointer_width = "64")]
+#[cfg(all(target_arch = "x86_64", target_pointer_width = "64"))]
 core::arch::global_asm!(
-    "
-.globl _start
-_start:
-mov rdi, [rsp]
-mov rsi, rsp
-add rsi, 8
-call main
-"
+    ".globl _start",
+    "_start:",
+    "mov rdi, [rsp]",
+    "mov rsi, rsp",
+    "add rsi, 8",
+    "call main",
 );
 
-#[cfg(target_pointer_width = "32")]
+#[cfg(all(
+    any(target_arch = "x86", target_arch = "x86_64"),
+    target_pointer_width = "32"
+))]
 core::arch::global_asm!(
-    "
-.globl _start
-_start:
-mov rdi, [rsp]
-mov rsi, rsp
-add rsi, 8
-call main
-"
+    ".globl _start",
+    "_start:",
+    "mov rdi, [rsp]",
+    "mov rsi, rsp",
+    "add rsi, 4",
+    "call main",
 );
 
 #[no_mangle]
