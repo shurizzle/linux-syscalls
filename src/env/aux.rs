@@ -106,18 +106,8 @@ macro_rules! def_keys {
     };
     (__internal_match $($(#[$meta:meta])* $name:ident($n:literal) -> $ty:ty),+ $(,)?) => {
         #[inline]
-        pub(crate) unsafe fn init()  {
-            #[cfg(not(any(target_env = "gnu", target_env = "musl")))]
-            let env = environ;
-            #[cfg(any(target_env = "gnu", target_env = "musl"))]
-            let env = __environ;
-            let mut ptr = {
-                let mut p = env;
-                while !(*p).is_null() {
-                    p = p.add(1);
-                }
-                p.add(1) as *mut AuxvPair
-            };
+        pub(crate) unsafe fn init(ptr: *const ())  {
+            let mut ptr = ptr as *mut AuxvPair;
 
             while (*ptr).a_type != 0 {
                 #[deny(unreachable_patterns)]
@@ -166,13 +156,6 @@ def_keys! {
     SysInfo(32) -> *const c_void,
     SysInfoHeader(33) -> *const c_void,
     MinimalSignalStackSize(51) -> usize,
-}
-
-extern "C" {
-    #[cfg(any(target_env = "gnu", target_env = "musl"))]
-    static __environ: *const *const u8;
-    #[cfg(not(any(target_env = "gnu", target_env = "musl")))]
-    static environ: *const *const u8;
 }
 
 pub(crate) static mut AUXV: [Option<aux_t>; KEYS_LEN] = [None; KEYS_LEN];

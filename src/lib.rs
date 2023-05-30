@@ -11,8 +11,11 @@ pub mod env;
 
 #[cfg(target_os = "linux")]
 mod init;
-#[cfg(target_os = "linux")]
+
+#[cfg(all(target_os = "linux", not(feature = "bare")))]
 pub use init::init;
+#[cfg(all(target_os = "linux", feature = "bare"))]
+pub use init::{init_from_args, init_from_environ};
 
 #[cfg(all(target_os = "linux", outline_syscalls))]
 #[cfg_attr(target_arch = "x86_64", path = "outline/common.rs")]

@@ -2,6 +2,12 @@ use std::{fmt, io::Write};
 
 #[allow(clippy::needless_return)]
 fn main() {
+    fn link_arg<T: std::fmt::Display>(what: T) {
+        println!("cargo:rustc-link-arg-bin=linux-syscalls={}", what);
+    }
+    link_arg("-nostartfiles");
+    link_arg("-nostdlib");
+
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-env-changed=TARGET");
     println!("cargo:rerun-if-env-changed=CARGO_CFG_TARGET_OS");

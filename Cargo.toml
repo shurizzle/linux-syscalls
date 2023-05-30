@@ -11,7 +11,8 @@ lto = true
 codegen-units = 1
 
 [features]
-default = []
+default = ["bare"]
+bare = []
 unchecked_vsyscall = []
 
 [build-dependencies]
