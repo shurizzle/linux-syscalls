@@ -12,6 +12,9 @@ fn main() {
     println!("aarch64");
     #[cfg(target_arch = "riscv64")]
     println!("riscv64");
+    #[cfg(target_arch = "powerpc64")]
+    println!("powerpc64");
     println!("{}", env::kernel_version());
+    println!("culo");
     unsafe { syscall!([!] Sysno::exit, 69) }
 }

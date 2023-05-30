@@ -18,6 +18,9 @@ arm)
 riscv64)
 	MARCH="riscv64"
 	;;
+powerpc64)
+	MARCH="powerpc64"
+	;;
 *)
 	echo "arch $1 unsupported" >&2
 	exit 1

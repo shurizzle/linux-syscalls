@@ -1,4 +1,4 @@
-#![no_std]
+// #![no_std]
 #![cfg_attr(asm_experimental_arch, feature(asm_experimental_arch))]
 
 #[cfg(target_os = "linux")]
@@ -28,6 +28,7 @@ pub use init::{init_from_args, init_from_environ};
     path = "outline/common.rs"
 )]
 #[cfg_attr(target_arch = "x86", path = "outline/x86.rs")]
+#[cfg_attr(target_arch = "powerpc64", path = "outline/powerpc64.rs")]
 mod arch;
 
 #[cfg(all(target_os = "linux", not(outline_syscalls)))]
@@ -37,6 +38,7 @@ mod arch;
 #[cfg_attr(target_arch = "x86_64", path = "inline/x86_64.rs")]
 #[cfg_attr(target_arch = "x86", path = "inline/x86.rs")]
 #[cfg_attr(target_arch = "riscv64", path = "inline/riscv64.rs")]
+#[cfg_attr(target_arch = "powerpc64", path = "inline/powerpc64.rs")]
 mod arch;
 
 #[cfg(all(
@@ -46,7 +48,8 @@ mod arch;
         target_arch = "x86",
         target_arch = "aarch64",
         target_arch = "arm",
-        target_arch = "riscv64"
+        target_arch = "riscv64",
+        target_arch = "powerpc64"
     )
 ))]
 pub use arch::{
@@ -64,7 +67,8 @@ pub use arch::{syscall7, syscall7_readonly};
         target_arch = "x86",
         target_arch = "aarch64",
         target_arch = "arm",
-        target_arch = "riscv64"
+        target_arch = "riscv64",
+        target_arch = "powerpc64"
     )
 ))]
 #[macro_export]

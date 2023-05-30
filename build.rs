@@ -24,6 +24,7 @@ fn main() {
         "aarch64" if pointer_width == "64" && endian == "little" => main_aarch64(),
         "arm" if pointer_width == "32" && endian == "little" => main_arm(),
         "riscv64" if pointer_width == "64" && endian == "little" => main_riscv64(),
+        "powerpc64" if pointer_width == "64" && endian == "big" => main_powerpc64(),
         _ => {
             panic!(
                 "arch {} {}-bits {} endian unsupported",
@@ -63,6 +64,12 @@ fn main_arm() {
 fn main_riscv64() {
     if needs_outline_asm("unimpl", true) {
         build_trampoline("riscv64")
+    }
+}
+
+fn main_powerpc64() {
+    if needs_outline_asm("trap", true) {
+        build_trampoline("powerpc64")
     }
 }
 
