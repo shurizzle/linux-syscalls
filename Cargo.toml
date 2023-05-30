@@ -3,6 +3,10 @@ name = "linux-syscalls"
 version = "0.1.0"
 edition = "2018"
 
+[[example]]
+name = 'x86-bare'
+required-features = ["bare"]
+
 [profile.release]
 panic = "abort"
 strip = true
@@ -11,7 +15,7 @@ lto = true
 codegen-units = 1
 
 [features]
-default = ["bare"]
+default = []
 bare = []
 unchecked_vsyscall = []
 

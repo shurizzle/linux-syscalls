@@ -18,16 +18,23 @@ pub use init::init;
 pub use init::{init_from_args, init_from_environ};
 
 #[cfg(all(target_os = "linux", outline_syscalls))]
-#[cfg_attr(target_arch = "x86_64", path = "outline/common.rs")]
+#[cfg_attr(
+    any(target_arch = "x86_64", target_arch = "aarch64"),
+    path = "outline/common.rs"
+)]
 #[cfg_attr(target_arch = "x86", path = "outline/x86.rs")]
 mod arch;
 
 #[cfg(all(target_os = "linux", not(outline_syscalls)))]
+#[cfg_attr(target_arch = "aarch64", path = "inline/aarch64.rs")]
 #[cfg_attr(target_arch = "x86_64", path = "inline/x86_64.rs")]
 #[cfg_attr(target_arch = "x86", path = "inline/x86.rs")]
 mod arch;
 
-#[cfg(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "x86")))]
+#[cfg(all(
+    target_os = "linux",
+    any(target_arch = "x86_64", target_arch = "x86", target_arch = "aarch64")
+))]
 pub use arch::{
     syscall0, syscall0_readonly, syscall1, syscall1_noreturn, syscall1_readonly, syscall2,
     syscall2_readonly, syscall3, syscall3_readonly, syscall4, syscall4_readonly, syscall5,
