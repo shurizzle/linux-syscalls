@@ -28,7 +28,7 @@ fn main() {
         "x86_64" if pointer_width == "64" && endian == "little" => main_x86_64(),
         "x86" if pointer_width == "32" && endian == "little" => main_x86(),
         _ => {
-            println!(
+            panic!(
                 "arch {} {}-bits {} endian unsupported",
                 arch, pointer_width, endian
             );
