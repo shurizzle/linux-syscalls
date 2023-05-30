@@ -28,7 +28,7 @@ impl core::fmt::Write for RawFd {
     fn write_str(&mut self, mut s: &str) -> core::fmt::Result {
         unsafe {
             while !s.is_empty() {
-                match syscall!([ro] Sysno::write, 1, s.as_ptr(), s.len()) {
+                match syscall!([ro] Sysno::write, self.0, s.as_ptr(), s.len()) {
                     Ok(n) => {
                         s = s.get_unchecked(n..);
                     }
