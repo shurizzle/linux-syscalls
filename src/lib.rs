@@ -19,13 +19,15 @@ pub use init::{init_from_args, init_from_environ};
 
 #[cfg(all(target_os = "linux", outline_syscalls))]
 #[cfg_attr(
-    any(target_arch = "x86_64", target_arch = "aarch64"),
+    any(target_arch = "x86_64", target_arch = "aarch64", target_arch = "arm"),
     path = "outline/common.rs"
 )]
 #[cfg_attr(target_arch = "x86", path = "outline/x86.rs")]
 mod arch;
 
 #[cfg(all(target_os = "linux", not(outline_syscalls)))]
+#[cfg_attr(all(target_arch = "arm", not(thumb_mode)), path = "inline/arm.rs")]
+#[cfg_attr(all(target_arch = "arm", thumb_mode), path = "inline/thumb.rs")]
 #[cfg_attr(target_arch = "aarch64", path = "inline/aarch64.rs")]
 #[cfg_attr(target_arch = "x86_64", path = "inline/x86_64.rs")]
 #[cfg_attr(target_arch = "x86", path = "inline/x86.rs")]
@@ -33,7 +35,12 @@ mod arch;
 
 #[cfg(all(
     target_os = "linux",
-    any(target_arch = "x86_64", target_arch = "x86", target_arch = "aarch64")
+    any(
+        target_arch = "x86_64",
+        target_arch = "x86",
+        target_arch = "aarch64",
+        target_arch = "arm"
+    )
 ))]
 pub use arch::{
     syscall0, syscall0_readonly, syscall1, syscall1_noreturn, syscall1_readonly, syscall2,
@@ -43,7 +50,15 @@ pub use arch::{
 #[cfg(all(target_os = "linux", target_arch = "mips"))]
 pub use arch::{syscall7, syscall7_readonly};
 
-#[cfg(all(target_os = "linux", not(target_arch = "mips")))]
+#[cfg(all(
+    target_os = "linux",
+    any(
+        target_arch = "x86_64",
+        target_arch = "x86",
+        target_arch = "aarch64",
+        target_arch = "arm"
+    )
+))]
 #[macro_export]
 macro_rules! syscall {
     ([ro] $sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr, $arg5:expr $(,)?) => {

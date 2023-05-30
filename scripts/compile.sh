@@ -4,6 +4,7 @@ set -eux
 
 MARCH="$ARCH"
 FARCH="$ARCH"
+ABI=gnu
 
 case "$MARCH" in
 x86)
@@ -11,12 +12,18 @@ x86)
 	;;
 esac
 
+case "$MARCH" in
+arm)
+	ABI=gnueabi
+	;;
+esac
+
 T="$(mktemp -d)"
 
-"$MARCH"-linux-gnu-as -g "$@" -o "$T/$ARCH-d.o" "$FARCH.s"
+"$MARCH"-linux-"$ABI"-as -g "$@" -o "$T/$ARCH-d.o" "$FARCH.s"
 mkdir -p "debug/$ARCH"
-"$MARCH"-linux-gnu-ar -crs "debug/$ARCH/liblinux_syscalls_rs.a" "$T/$ARCH-d.o"
+"$MARCH"-linux-"$ABI"-ar -crs "debug/$ARCH/liblinux_syscalls_rs.a" "$T/$ARCH-d.o"
 
-"$MARCH"-linux-gnu-as "$@" -o "$T/$ARCH-r.o" "$FARCH.s"
+"$MARCH"-linux-"$ABI"-as "$@" -o "$T/$ARCH-r.o" "$FARCH.s"
 mkdir -p "release/$ARCH"
-"$MARCH"-linux-gnu-ar -crs "release/$ARCH/liblinux_syscalls_rs.a" "$T/$ARCH-r.o"
+"$MARCH"-linux-"$ABI"-ar -crs "release/$ARCH/liblinux_syscalls_rs.a" "$T/$ARCH-r.o"

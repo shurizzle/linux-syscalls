@@ -22,6 +22,7 @@ fn main() {
         "x86_64" if pointer_width == "64" && endian == "little" => main_x86_64(),
         "x86" if pointer_width == "32" && endian == "little" => main_x86(),
         "aarch64" if pointer_width == "64" && endian == "little" => main_aarch64(),
+        "arm" if pointer_width == "32" && endian == "little" => main_arm(),
         _ => {
             panic!(
                 "arch {} {}-bits {} endian unsupported",
@@ -32,21 +33,34 @@ fn main() {
 }
 
 fn main_x86_64() {
-    if needs_outline_asm("ud2", false) {
+    if needs_outline_asm("ud2", true) {
         build_trampoline("x86_64")
     }
 }
 
 fn main_x86() {
-    if needs_outline_asm("ud2", false) {
+    if needs_outline_asm("ud2", true) {
         build_trampoline("x86")
     }
 }
 
 fn main_aarch64() {
-    if needs_outline_asm("udf #16", false) {
+    if needs_outline_asm("udf #16", true) {
         build_trampoline("aarch64")
     }
+}
+
+fn main_arm() {
+    if has_thumb_mode() {
+        use_feature("thumb_mode");
+    }
+    if needs_outline_asm("udf #16", true) {
+        build_trampoline("arm")
+    }
+}
+
+fn has_thumb_mode() -> bool {
+    !can_compile("#![feature(asm_experimental_arch)]\nextern crate core;\npub unsafe fn f() { ::core::arch::asm!(\"udf #16\", in(\"r7\") 0); }", true)
 }
 
 fn build_trampoline(arch: &str) {

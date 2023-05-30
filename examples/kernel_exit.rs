@@ -10,6 +10,8 @@ fn main() {
     println!("x86_64");
     #[cfg(target_arch = "aarch64")]
     println!("aarch64");
+    #[cfg(target_arch = "arm")]
+    println!("arm");
     println!("{}", env::kernel_version());
     unsafe { syscall!([!] Sysno::exit, 69) }
 }

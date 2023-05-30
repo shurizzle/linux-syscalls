@@ -10,7 +10,10 @@ x86_64)
 	MARCH="x86-64"
 	;;
 aarch64)
-	MARCH="$1"
+	MARCH="aarch64"
+	;;
+arm)
+	MARCH="arm"
 	;;
 *)
 	echo "arch $1 unsupported" >&2
@@ -19,6 +22,15 @@ aarch64)
 esac
 shift
 
+case "$MARCH" in
+arm)
+	ABI="gnueabi"
+	;;
+*)
+	ABI=gnu
+	;;
+esac
+
 apt-get -y update
 apt-get -y upgrade
-apt-get -y install binutils-"$MARCH"-linux-gnu
+apt-get -y install binutils-"$MARCH"-linux-"$ABI"
