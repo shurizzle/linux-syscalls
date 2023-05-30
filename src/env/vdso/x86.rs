@@ -53,22 +53,27 @@ pub(crate) static mut VDSO: UnsafeCell<Vdso> = UnsafeCell::new(Vdso(RawVdso {
 }));
 
 pub(crate) unsafe fn quasi_init() {
-    let sysinfo = crate::env::aux::get::<SysInfoHeader>().expect("system info header not found");
-    (*VDSO.get()).0 = RawVdso::from_ptr(sysinfo).expect("Invalid vDSO");
+    if let Some(sysinfo) = crate::env::aux::get::<SysInfoHeader>() {
+        (*VDSO.get()).0 = RawVdso::from_ptr(sysinfo).expect("Invalid vDSO");
+    }
     crate::arch::x86_init((*VDSO.get()).0.vsyscall as *const ());
 }
 
 pub(crate) unsafe fn init() {
-    let v = crate::env::Version {
-        major: 3,
-        minor: 1,
-        revision: 5,
-    };
-    if *crate::env::kernel::KERNEL_VERSION.get() >= v {
-        let vdso = &*VDSO.get();
-        if vdso.0.clock_gettime.is_null() || vdso.0.clock_gettime.is_null() || vdso.0.time.is_null()
-        {
-            panic!("Invalid vDSO");
+    if !(*VDSO.get()).0.vsyscall.is_null() {
+        let v = crate::env::Version {
+            major: 3,
+            minor: 1,
+            revision: 5,
+        };
+        if *crate::env::kernel::KERNEL_VERSION.get() >= v {
+            let vdso = &*VDSO.get();
+            if vdso.0.clock_gettime.is_null()
+                || vdso.0.clock_gettime.is_null()
+                || vdso.0.time.is_null()
+            {
+                panic!("Invalid vDSO");
+            }
         }
     }
 }

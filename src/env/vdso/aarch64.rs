@@ -1,5 +1,7 @@
 use core::cell::UnsafeCell;
 
+use crate::env::aux::SysInfoHeader;
+
 pub use linux_raw_vdso::Vdso as RawVdso;
 
 #[non_exhaustive]
@@ -38,4 +40,8 @@ pub(crate) static mut VDSO: UnsafeCell<Vdso> = UnsafeCell::new(Vdso(RawVdso {
     clock_getres: core::ptr::null(),
 }));
 
-pub(crate) unsafe fn init() {}
+pub(crate) unsafe fn init() {
+    if let Some(sysinfo) = crate::env::aux::get::<SysInfoHeader>() {
+        (*VDSO.get()).0 = RawVdso::from_ptr(sysinfo).expect("Invalid vDSO");
+    }
+}

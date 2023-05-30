@@ -175,87 +175,6 @@ unsafe fn vsyscall6(
     Errno::from_ret(ret)
 }
 
-#[cfg(feature = "unchecked_vsyscall")]
-#[inline]
-pub unsafe fn syscall0(sysno: Sysno) -> Result<usize, Errno> {
-    vsyscall0(sysno)
-}
-
-#[cfg(feature = "unchecked_vsyscall")]
-#[inline]
-pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
-    vsyscall1(sysno, arg0)
-}
-
-#[cfg(feature = "unchecked_vsyscall")]
-#[inline]
-pub unsafe fn syscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
-    vsyscall1_noreturn(sysno, arg0)
-}
-
-#[cfg(feature = "unchecked_vsyscall")]
-#[inline]
-pub unsafe fn syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
-    vsyscall2(sysno, arg0, arg1)
-}
-
-#[cfg(feature = "unchecked_vsyscall")]
-#[inline]
-pub unsafe fn syscall3(
-    sysno: Sysno,
-    arg0: usize,
-    arg1: usize,
-    arg2: usize,
-) -> Result<usize, Errno> {
-    vsyscall3(sysno, arg0, arg1, arg2)
-}
-
-#[cfg(feature = "unchecked_vsyscall")]
-#[inline]
-pub unsafe fn syscall4(
-    sysno: Sysno,
-    arg0: usize,
-    arg1: usize,
-    arg2: usize,
-    arg3: usize,
-) -> Result<usize, Errno> {
-    vsyscall4(sysno, arg0, arg1, arg2, arg3)
-}
-
-#[cfg(feature = "unchecked_vsyscall")]
-#[inline]
-pub unsafe fn syscall5(
-    sysno: Sysno,
-    arg0: usize,
-    arg1: usize,
-    arg2: usize,
-    arg3: usize,
-    arg4: usize,
-) -> Result<usize, Errno> {
-    vsyscall5(sysno, arg0, arg1, arg2, arg3, arg4)
-}
-
-#[cfg(feature = "unchecked_vsyscall")]
-#[inline]
-pub unsafe fn syscall6(
-    sysno: Sysno,
-    arg0: usize,
-    arg1: usize,
-    arg2: usize,
-    arg3: usize,
-    arg4: usize,
-    arg5: usize,
-) -> Result<usize, Errno> {
-    vsyscall6(sysno, arg0, arg1, arg2, arg3, arg4, arg5)
-}
-
-#[cfg(feature = "unchecked_vsyscall")]
-pub use {
-    syscall1 as syscall1_readonly, syscall2 as syscall2_readonly, syscall3 as syscall3_readonly,
-    syscall4 as syscall4_readonly, syscall5 as syscall5_readonly, syscall6 as syscall6_readonly,
-};
-
-#[cfg(not(feature = "unchecked_vsyscall"))]
 #[inline]
 pub unsafe fn syscall0(sysno: Sysno) -> Result<usize, Errno> {
     if callee() == 0 {
@@ -273,7 +192,6 @@ pub unsafe fn syscall0(sysno: Sysno) -> Result<usize, Errno> {
 
 pub use syscall0 as syscall0_readonly;
 
-#[cfg(not(feature = "unchecked_vsyscall"))]
 pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
     if callee() == 0 {
         let ret;
@@ -289,7 +207,6 @@ pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
     }
 }
 
-#[cfg(not(feature = "unchecked_vsyscall"))]
 pub unsafe fn syscall1_readonly(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
     if callee() == 0 {
         let ret;
@@ -305,7 +222,6 @@ pub unsafe fn syscall1_readonly(sysno: Sysno, arg0: usize) -> Result<usize, Errn
     }
 }
 
-#[cfg(not(feature = "unchecked_vsyscall"))]
 pub unsafe fn syscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
     if callee() == 0 {
         asm!(
@@ -316,11 +232,10 @@ pub unsafe fn syscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
             options(noreturn)
         )
     } else {
-        vsyscall1_noreturn(sysno)
+        vsyscall1_noreturn(sysno, arg0)
     }
 }
 
-#[cfg(not(feature = "unchecked_vsyscall"))]
 pub unsafe fn syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
     if callee() == 0 {
         let ret;
@@ -337,7 +252,6 @@ pub unsafe fn syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, 
     }
 }
 
-#[cfg(not(feature = "unchecked_vsyscall"))]
 pub unsafe fn syscall2_readonly(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
     if callee() == 0 {
         let ret;
@@ -354,7 +268,6 @@ pub unsafe fn syscall2_readonly(sysno: Sysno, arg0: usize, arg1: usize) -> Resul
     }
 }
 
-#[cfg(not(feature = "unchecked_vsyscall"))]
 pub unsafe fn syscall3(
     sysno: Sysno,
     arg0: usize,
@@ -377,7 +290,6 @@ pub unsafe fn syscall3(
     }
 }
 
-#[cfg(not(feature = "unchecked_vsyscall"))]
 pub unsafe fn syscall3_readonly(
     sysno: Sysno,
     arg0: usize,
@@ -400,7 +312,6 @@ pub unsafe fn syscall3_readonly(
     }
 }
 
-#[cfg(not(feature = "unchecked_vsyscall"))]
 pub unsafe fn syscall4(
     sysno: Sysno,
     arg0: usize,
@@ -429,7 +340,6 @@ pub unsafe fn syscall4(
     }
 }
 
-#[cfg(not(feature = "unchecked_vsyscall"))]
 pub unsafe fn syscall4_readonly(
     sysno: Sysno,
     arg0: usize,
@@ -456,7 +366,6 @@ pub unsafe fn syscall4_readonly(
     }
 }
 
-#[cfg(not(feature = "unchecked_vsyscall"))]
 pub unsafe fn syscall5(
     sysno: Sysno,
     arg0: usize,
@@ -485,7 +394,6 @@ pub unsafe fn syscall5(
     }
 }
 
-#[cfg(not(feature = "unchecked_vsyscall"))]
 pub unsafe fn syscall5_readonly(
     sysno: Sysno,
     arg0: usize,
@@ -514,7 +422,6 @@ pub unsafe fn syscall5_readonly(
     }
 }
 
-#[cfg(not(feature = "unchecked_vsyscall"))]
 pub unsafe fn syscall6(
     sysno: Sysno,
     arg0: usize,
@@ -553,7 +460,6 @@ pub unsafe fn syscall6(
     }
 }
 
-#[cfg(not(feature = "unchecked_vsyscall"))]
 pub unsafe fn syscall6_readonly(
     sysno: Sysno,
     arg0: usize,
