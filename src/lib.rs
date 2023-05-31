@@ -1,6 +1,8 @@
 // #![no_std]
 #![cfg_attr(asm_experimental_arch, feature(asm_experimental_arch))]
 
+mod bitflags;
+
 #[cfg(target_os = "linux")]
 pub use linux_errno::Errno;
 #[cfg(target_os = "linux")]

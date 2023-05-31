@@ -19,6 +19,3 @@ cc = "1.0.79"
 linux-sysno = { git = "https://github.com/shurizzle/linux-sysno" }
 linux-errno = { git = "https://github.com/shurizzle/linux-errno" }
 linux-raw-vdso = { git = "https://github.com/shurizzle/linux-raw-vdso" }
-
-[target.'cfg(target_arch = "powerpc64")'.dependencies]
-bitflags = "2.3.1"
