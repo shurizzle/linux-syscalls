@@ -7,6 +7,7 @@ static mut HAS_SCV: AtomicBool = AtomicBool::new(false);
 macro_rules! sys {
     ($($tt:tt)+) => {
         if HAS_SCV.load(Ordering::SeqCst) {
+            // It's `scv 0` instruction but apparently llvm doesn't support it
             ::core::arch::asm!(
                 ".byte 0x44",
                 ".byte 0x00",
