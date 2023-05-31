@@ -15,6 +15,5 @@ fn main() {
     #[cfg(target_arch = "powerpc64")]
     println!("powerpc64");
     println!("{}", env::kernel_version());
-    println!("culo");
     unsafe { syscall!([!] Sysno::exit, 69) }
 }
