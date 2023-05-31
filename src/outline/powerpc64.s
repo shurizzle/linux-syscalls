@@ -14,64 +14,15 @@
 #
 # We can pass syscall's parameters as a normal call and move the last
 # parameter to r0.
+#
+# TODO:
+# Support for scv 0
+# https://docs.kernel.org/powerpc/syscall64-abi.html
+# https://refspecs.linuxfoundation.org/ELF/ppc64/PPC-elf64abi.html
+# https://uclibc.org/docs/tls-ppc64.txt
+# https://www.akkadia.org/drepper/tls.pdf
 
   .section .text
-
-# HACK: "old" assemblers (and clang) don't recognize scv mnemonic
-.macro SCV0
-  .byte 0x44
-  .byte 0x00
-  .byte 0x00
-  .byte 0x01
-.endm
-
-  .globl linux_syscalls_rs_scvsyscall0
-linux_syscalls_rs_scvsyscall0:
-  mr   0, 3
-  SCV0
-  blr
-
-  .globl linux_syscalls_rs_scvsyscall1
-linux_syscalls_rs_scvsyscall1:
-  mr   0, 4
-  SCV0
-  blr
-
-  .globl linux_syscalls_rs_scvsyscall1_noreturn
-linux_syscalls_rs_scvsyscall1_noreturn:
-  mr   0, 4
-  SCV0
-  trap
-
-  .globl linux_syscalls_rs_scvsyscall2
-linux_syscalls_rs_scvsyscall2:
-  mr   0, 5
-  SCV0
-  blr
-
-  .globl linux_syscalls_rs_scvsyscall3
-linux_syscalls_rs_scvsyscall3:
-  mr   0, 6
-  SCV0
-  blr
-
-  .globl linux_syscalls_rs_scvsyscall4
-linux_syscalls_rs_scvsyscall4:
-  mr   0, 7
-  SCV0
-  blr
-
-  .globl linux_syscalls_rs_scvsyscall5
-linux_syscalls_rs_scvsyscall5:
-  mr   0, 8
-  SCV0
-  blr
-
-  .globl linux_syscalls_rs_scvsyscall6
-linux_syscalls_rs_scvsyscall6:
-  mr   0, 9
-  SCV0
-  blr
 
   .globl linux_syscalls_rs_syscall0
 linux_syscalls_rs_syscall0:

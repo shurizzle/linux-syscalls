@@ -15,11 +15,8 @@ static mut LOCK: AtomicU32 = AtomicU32::new(INITIAL);
 
 unsafe fn real_init(env: *const ()) {
     crate::env::aux::init(env);
-    #[cfg(target_arch = "powerpc64")]
-    crate::arch::init();
     crate::env::kernel::init();
     crate::env::vdso::init();
-    #[cfg(not(target_arch = "powerpc64"))]
     crate::arch::init();
 }
 

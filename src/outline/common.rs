@@ -125,18 +125,5 @@ pub use {
     syscall6 as syscall6_readonly,
 };
 
-#[cfg(not(target_arch = "powerpc64"))]
 #[inline(always)]
 pub(crate) fn init() {}
-
-#[cfg(target_arch = "powerpc64")]
-#[inline(always)]
-pub(crate) unsafe fn init() {
-    use crate::env::aux::HardwareCapabilities2;
-
-    if crate::env::aux::get::<HardwareCapabilities2>()
-        .map_or(false, |flag| flag.contains(crate::env::aux::Features2::SCV))
-    {
-        // TODO: set flags in case of bare or not glibc
-    }
-}
