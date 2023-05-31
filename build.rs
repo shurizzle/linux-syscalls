@@ -87,6 +87,10 @@ fn build_trampoline(arch: &str) {
             .compile("liblinux_syscalls_rs.a");
     } else {
         let profile = std::env::var("PROFILE").unwrap();
+        println!(
+            "cargo:rerun-if-changed=src/outline/{}/{}/liblinux_syscalls_rs.s",
+            profile, arch
+        );
         println!("cargo:rustc-link-search=src/outline/{}/{}", profile, arch);
         println!("cargo:rustc-link-lib=static=linux_syscalls_rs");
     }

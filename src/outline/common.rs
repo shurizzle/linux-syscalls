@@ -125,5 +125,6 @@ pub use {
     syscall6 as syscall6_readonly,
 };
 
+#[allow(dead_code)]
 #[inline(always)]
 pub(crate) fn init() {}
