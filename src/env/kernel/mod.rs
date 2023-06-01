@@ -1,4 +1,4 @@
-pub mod common;
+pub(crate) mod common;
 
 pub(crate) use self::common::{uname, version};
 pub use self::common::{utsname, Version};

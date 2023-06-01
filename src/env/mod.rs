@@ -3,10 +3,7 @@ pub mod aux;
 pub mod kernel;
 pub mod vdso;
 
-pub use self::{
-    kernel::{utsname, Version},
-    vdso::Vdso,
-};
+pub use self::{kernel::utsname, kernel::Version, vdso::Vdso};
 
 pub fn getauxval<T: aux::VdsoKey>() -> Option<T::Item> {
     #[cfg(not(feature = "bare"))]
