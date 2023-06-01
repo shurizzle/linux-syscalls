@@ -4,6 +4,7 @@ ENV ARCH="$ARCH"
 
 ADD /scripts/install.sh /install.sh
 ADD /scripts/compile.sh /compile.sh
+ADD /docker/entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /install.sh && \
   chmod +x /compile.sh && \
@@ -13,7 +14,8 @@ RUN chmod +x /install.sh && \
   apt-get clean autoclean && \
   apt-get autoremove --yes && \
   rm -rf /var/cache/apt/archives && \
-  rm -rf /var/lib/apt/lists/*
+  rm -rf /var/lib/apt/lists/* && \
+  chmod +x /entrypoint.sh
 
 WORKDIR /project
-ENTRYPOINT ["/compile.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

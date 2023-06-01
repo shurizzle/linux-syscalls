@@ -28,7 +28,8 @@ pub use init::{init_from_args, init_from_environ};
         target_arch = "riscv64",
         target_arch = "mips",
         target_arch = "mips64",
-        target_arch = "s390x"
+        target_arch = "s390x",
+        target_arch = "loongarch64"
     ),
     path = "outline/common.rs"
 )]
@@ -47,6 +48,7 @@ mod arch;
 #[cfg_attr(target_arch = "mips", path = "inline/mips.rs")]
 #[cfg_attr(target_arch = "mips64", path = "inline/mips64.rs")]
 #[cfg_attr(target_arch = "s390x", path = "inline/s390x.rs")]
+#[cfg_attr(target_arch = "loongarch64", path = "inline/loongarch64.rs")]
 mod arch;
 
 #[cfg(all(target_os = "linux", target_arch = "powerpc64"))]
@@ -62,7 +64,8 @@ pub use arch::has_scv;
         target_arch = "powerpc64",
         target_arch = "mips",
         target_arch = "mips64",
-        target_arch = "s390x"
+        target_arch = "s390x",
+        target_arch = "loongarch64"
     )
 ))]
 pub use arch::{
@@ -83,7 +86,8 @@ pub use arch::{syscall7, syscall7_readonly};
         target_arch = "riscv64",
         target_arch = "powerpc64",
         target_arch = "mips64",
-        target_arch = "s390x"
+        target_arch = "s390x",
+        target_arch = "loongarch64"
     )
 ))]
 #[macro_export]
