@@ -19,9 +19,9 @@
 
   .text
 
-  .globl raw_syscalls_rs_syscall0
-  .type  raw_syscalls_rs_syscall0,%function
-raw_syscalls_rs_syscall0:
+  .globl linux_syscalls_rs_syscall0
+  .type  linux_syscalls_rs_syscall0,%function
+linux_syscalls_rs_syscall0:
   .fnstart
   .cantunwind
   push {r7, lr}
@@ -30,9 +30,9 @@ raw_syscalls_rs_syscall0:
   pop  {r7, pc}
   .fnend
 
-  .globl raw_syscalls_rs_syscall1
-  .type  raw_syscalls_rs_syscall1,%function
-raw_syscalls_rs_syscall1:
+  .globl linux_syscalls_rs_syscall1
+  .type  linux_syscalls_rs_syscall1,%function
+linux_syscalls_rs_syscall1:
   .fnstart
   .cantunwind
   push {r7, lr}
@@ -41,9 +41,9 @@ raw_syscalls_rs_syscall1:
   pop  {r7, pc}
   .fnend
 
-  .globl raw_syscalls_rs_syscall1_noreturn
-  .type  raw_syscalls_rs_syscall1_noreturn,%function
-raw_syscalls_rs_syscall1_noreturn:
+  .globl linux_syscalls_rs_syscall1_noreturn
+  .type  linux_syscalls_rs_syscall1_noreturn,%function
+linux_syscalls_rs_syscall1_noreturn:
   .fnstart
   .cantunwind
   mov  r7, r1
@@ -51,9 +51,9 @@ raw_syscalls_rs_syscall1_noreturn:
   udf  #16
   .fnend
 
-  .globl raw_syscalls_rs_syscall2
-  .type  raw_syscalls_rs_syscall2,%function
-raw_syscalls_rs_syscall2:
+  .globl linux_syscalls_rs_syscall2
+  .type  linux_syscalls_rs_syscall2,%function
+linux_syscalls_rs_syscall2:
   .fnstart
   .cantunwind
   push {r7, lr}
@@ -62,9 +62,9 @@ raw_syscalls_rs_syscall2:
   pop  {r7, pc}
   .fnend
 
-  .globl raw_syscalls_rs_syscall3
-  .type  raw_syscalls_rs_syscall3,%function
-raw_syscalls_rs_syscall3:
+  .globl linux_syscalls_rs_syscall3
+  .type  linux_syscalls_rs_syscall3,%function
+linux_syscalls_rs_syscall3:
   .fnstart
   .cantunwind
   push {r7, lr}
@@ -73,9 +73,9 @@ raw_syscalls_rs_syscall3:
   pop  {r7, pc}
   .fnend
 
-  .globl raw_syscalls_rs_syscall4
-  .type  raw_syscalls_rs_syscall4,%function
-raw_syscalls_rs_syscall4:
+  .globl linux_syscalls_rs_syscall4
+  .type  linux_syscalls_rs_syscall4,%function
+linux_syscalls_rs_syscall4:
   .fnstart
   .cantunwind
   push {r7, lr}
@@ -85,9 +85,9 @@ raw_syscalls_rs_syscall4:
   .fnend
 
 // r11 can be the fp, save and restore it
-  .globl raw_syscalls_rs_syscall5
-  .type  raw_syscalls_rs_syscall5,%function
-raw_syscalls_rs_syscall5:
+  .globl linux_syscalls_rs_syscall5
+  .type  linux_syscalls_rs_syscall5,%function
+linux_syscalls_rs_syscall5:
   .fnstart
   .cantunwind
   push {r4, r7, r11, lr}
@@ -97,9 +97,9 @@ raw_syscalls_rs_syscall5:
   pop  {r4, r7, r11, pc}
   .fnend
 
-  .globl raw_syscalls_rs_syscall6
-  .type  raw_syscalls_rs_syscall6,%function
-raw_syscalls_rs_syscall6:
+  .globl linux_syscalls_rs_syscall6
+  .type  linux_syscalls_rs_syscall6,%function
+linux_syscalls_rs_syscall6:
   .fnstart
   .cantunwind
   push {r4, r5, r7, lr}
