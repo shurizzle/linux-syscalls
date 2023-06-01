@@ -56,7 +56,12 @@ esac
 
 apt-get -y update
 apt-get -y upgrade
-apt-get -y install build-essential wget
+apt-get -y install build-essential
+remove_wget=false
+if ! which wget 2>/dev/null >/dev/null; then
+	remove_wget=true
+	apt-get -y install wget
+fi
 
 if [ $MARCH = loongarch64 ]; then
 	cd
@@ -89,6 +94,7 @@ if [ $MARCH = loongarch64 ]; then
 		ln -s "/opt/loongarch64-unknown-linux-gnu/bin/loongarch64-unknown-linux-gnu-$tool" "/bin/loongarch64-linux-gnu-$tool"
 	done
 else
+	apt-get install -y qemu-user
 	if [ "$MARCH" = i686 ]; then
 		apt-get -y install libc-dev-"$MARCH"-cross
 	else
@@ -115,7 +121,9 @@ if ! which rustup 2>/dev/null >/dev/null; then
 	rm -f rustup-init
 fi
 
-apt-get -y purge wget
+if $remove_wget; then
+	apt-get -y purge wget
+fi
 apt-get -y autoremove
 
 rustup toolchain install nightly
