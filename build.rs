@@ -25,6 +25,7 @@ fn main() {
         "arm" if pointer_width == "32" && endian == "little" => main_arm(),
         "riscv64" if pointer_width == "64" && endian == "little" => main_riscv64(),
         "powerpc64" if pointer_width == "64" && endian == "big" => main_powerpc64(),
+        "mips" if pointer_width == "32" && endian == "big" => main_mips(),
         _ => {
             panic!(
                 "arch {} {}-bits {} endian unsupported",
@@ -73,17 +74,27 @@ fn main_powerpc64() {
     }
 }
 
+fn main_mips() {
+    if needs_outline_asm("teq $zero, $zero", true) {
+        build_trampoline("mips")
+    }
+}
+
 fn has_thumb_mode() -> bool {
     !can_compile("#![feature(asm_experimental_arch)]\nextern crate core;\npub unsafe fn f() { ::core::arch::asm!(\"udf #16\", in(\"r7\") 0); }", true)
 }
 
 fn build_trampoline(arch: &str) {
+    build_trampoline_with_source(arch, arch)
+}
+
+fn build_trampoline_with_source(arch: &str, source: &str) {
     if std::env::var("CARGO_CFG_FORCE_SYSCALLS_REBUILD").is_ok() {
-        println!("cargo:rerun-if-changed=src/outline/{}.s", arch);
+        println!("cargo:rerun-if-changed=src/outline/{}.s", source);
         cc::Build::new()
             .cargo_metadata(true)
             .emit_rerun_if_env_changed(true)
-            .file(format!("src/outline/{}.s", arch))
+            .file(format!("src/outline/{}.s", source))
             .compile("liblinux_syscalls_rs.a");
     } else {
         let profile = std::env::var("PROFILE").unwrap();

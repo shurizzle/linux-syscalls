@@ -21,6 +21,9 @@ riscv64)
 powerpc64)
 	MARCH="powerpc64"
 	;;
+mips)
+	MARCH="mips"
+	;;
 *)
 	echo "arch $1 unsupported" >&2
 	exit 1

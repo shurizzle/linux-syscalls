@@ -30,6 +30,18 @@ extern "C" {
         arg5: usize,
         sysno: usize,
     ) -> usize;
+
+    #[cfg(target_arch = "mips")]
+    fn linux_syscalls_rs_syscall7(
+        arg0: usize,
+        arg1: usize,
+        arg2: usize,
+        arg3: usize,
+        arg4: usize,
+        arg5: usize,
+        arg6: usize,
+        sysno: usize,
+    ) -> usize;
 }
 
 #[inline]
@@ -119,6 +131,32 @@ pub unsafe fn syscall6(
     ))
 }
 
+#[cfg(target_arch = "mips")]
+#[inline]
+pub unsafe fn syscall7(
+    sysno: Sysno,
+    arg0: usize,
+    arg1: usize,
+    arg2: usize,
+    arg3: usize,
+    arg4: usize,
+    arg5: usize,
+    arg6: usize,
+) -> Result<usize, Errno> {
+    Errno::from_ret(linux_syscalls_rs_syscall7(
+        arg0,
+        arg1,
+        arg2,
+        arg3,
+        arg4,
+        arg5,
+        arg6,
+        sysno as usize,
+    ))
+}
+
+#[cfg(target_arch = "mips")]
+pub use syscall7 as syscall7_readonly;
 pub use {
     syscall0 as syscall0_readonly, syscall1 as syscall1_readonly, syscall2 as syscall2_readonly,
     syscall3 as syscall3_readonly, syscall4 as syscall4_readonly, syscall5 as syscall5_readonly,

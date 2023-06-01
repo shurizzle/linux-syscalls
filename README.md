@@ -16,6 +16,7 @@
 - thumbv7neon-unknown-linux-gnueabihf
 - riscv64gc-unknown-linux-gnu
 - powerpc64-unknown-linux-gnu
+- mips-unknown-linux-gnu
 
 **Tier 3**
 - armv5te-unknown-linux-gnueabi
