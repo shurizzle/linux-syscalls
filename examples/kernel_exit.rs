@@ -24,4 +24,6 @@ fn print_arch() {
     println!("powerpc64");
     #[cfg(target_arch = "mips")]
     println!("mips");
+    #[cfg(target_arch = "mips64")]
+    println!("mips64");
 }

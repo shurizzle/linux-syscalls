@@ -24,6 +24,9 @@ powerpc64)
 mips)
 	MARCH="mips"
 	;;
+mips64)
+	MARCH="mips64"
+	;;
 *)
 	echo "arch $1 unsupported" >&2
 	exit 1
@@ -34,6 +37,9 @@ shift
 case "$MARCH" in
 arm)
 	ABI="gnueabi"
+	;;
+mips64)
+	ABI="gnuabi64"
 	;;
 *)
 	ABI=gnu

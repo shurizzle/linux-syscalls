@@ -26,6 +26,7 @@ fn main() {
         "riscv64" if pointer_width == "64" && endian == "little" => main_riscv64(),
         "powerpc64" if pointer_width == "64" && endian == "big" => main_powerpc64(),
         "mips" if pointer_width == "32" && endian == "big" => main_mips(),
+        "mips64" if pointer_width == "64" && endian == "big" => main_mips64(),
         _ => {
             panic!(
                 "arch {} {}-bits {} endian unsupported",
@@ -77,6 +78,12 @@ fn main_powerpc64() {
 fn main_mips() {
     if needs_outline_asm("teq $zero, $zero", true) {
         build_trampoline("mips")
+    }
+}
+
+fn main_mips64() {
+    if needs_outline_asm("teq $0, $0", true) {
+        build_trampoline("mips64")
     }
 }
 

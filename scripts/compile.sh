@@ -16,6 +16,9 @@ case "$MARCH" in
 arm)
 	ABI=gnueabi
 	;;
+mips64)
+	ABI=gnuabi64
+	;;
 esac
 
 T="$(mktemp -d)"

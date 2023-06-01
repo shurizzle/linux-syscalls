@@ -26,7 +26,8 @@ pub use init::{init_from_args, init_from_environ};
         target_arch = "aarch64",
         target_arch = "arm",
         target_arch = "riscv64",
-        target_arch = "mips"
+        target_arch = "mips",
+        target_arch = "mips64"
     ),
     path = "outline/common.rs"
 )]
@@ -43,6 +44,7 @@ mod arch;
 #[cfg_attr(target_arch = "riscv64", path = "inline/riscv64.rs")]
 #[cfg_attr(target_arch = "powerpc64", path = "inline/powerpc64.rs")]
 #[cfg_attr(target_arch = "mips", path = "inline/mips.rs")]
+#[cfg_attr(target_arch = "mips64", path = "inline/mips64.rs")]
 mod arch;
 
 #[cfg(all(target_os = "linux", target_arch = "powerpc64"))]
@@ -56,7 +58,8 @@ pub use arch::has_scv;
         target_arch = "arm",
         target_arch = "riscv64",
         target_arch = "powerpc64",
-        target_arch = "mips"
+        target_arch = "mips",
+        target_arch = "mips64"
     )
 ))]
 pub use arch::{
@@ -75,7 +78,8 @@ pub use arch::{syscall7, syscall7_readonly};
         target_arch = "aarch64",
         target_arch = "arm",
         target_arch = "riscv64",
-        target_arch = "powerpc64"
+        target_arch = "powerpc64",
+        target_arch = "mips64"
     )
 ))]
 #[macro_export]

@@ -17,6 +17,7 @@
 - riscv64gc-unknown-linux-gnu
 - powerpc64-unknown-linux-gnu
 - mips-unknown-linux-gnu
+- mips64-unknown-linux-gnuabi64
 
 **Tier 3**
 - armv5te-unknown-linux-gnueabi
