@@ -121,6 +121,10 @@ apt-get -y autoremove
 rustup toolchain install nightly
 if [ "$ARCH" = loongarch64 ]; then
 	rustup target add loongarch64-unknown-linux-gnu --toolchain nightly
-else
+elif [ "$ARCH" = riscv64 ]; then
+	rustup target add riscv64gc-unknown-linux-"$ABI"
+elif [ "$ARCH" = x86 ]; then
 	rustup target add "$MARCH"-unknown-linux-"$ABI"
+else
+	rustup target add "$ARCH"-unknown-linux-"$ABI"
 fi
