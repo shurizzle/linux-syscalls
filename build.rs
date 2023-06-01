@@ -27,6 +27,7 @@ fn main() {
         "powerpc64" if pointer_width == "64" && endian == "big" => main_powerpc64(),
         "mips" if pointer_width == "32" && endian == "big" => main_mips(),
         "mips64" if pointer_width == "64" && endian == "big" => main_mips64(),
+        "s390x" if pointer_width == "64" && endian == "big" => main_s390x(),
         _ => {
             panic!(
                 "arch {} {}-bits {} endian unsupported",
@@ -84,6 +85,12 @@ fn main_mips() {
 fn main_mips64() {
     if needs_outline_asm("teq $0, $0", true) {
         build_trampoline("mips64")
+    }
+}
+
+fn main_s390x() {
+    if needs_outline_asm("trap2", true) {
+        build_trampoline("s390x")
     }
 }
 

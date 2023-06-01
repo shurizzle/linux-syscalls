@@ -18,6 +18,7 @@
 - powerpc64-unknown-linux-gnu
 - mips-unknown-linux-gnu
 - mips64-unknown-linux-gnuabi64
+- s390x-unknown-linux-gnu
 
 **Tier 3**
 - armv5te-unknown-linux-gnueabi

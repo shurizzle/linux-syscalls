@@ -26,4 +26,6 @@ fn print_arch() {
     println!("mips");
     #[cfg(target_arch = "mips64")]
     println!("mips64");
+    #[cfg(target_arch = "s390x")]
+    println!("s390x");
 }

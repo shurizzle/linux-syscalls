@@ -27,6 +27,9 @@ mips)
 mips64)
 	MARCH="mips64"
 	;;
+s390x)
+	MARCH="s390x"
+	;;
 *)
 	echo "arch $1 unsupported" >&2
 	exit 1
