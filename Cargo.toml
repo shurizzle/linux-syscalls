@@ -16,6 +16,6 @@ bare = []
 cc = "1.0.79"
 
 [dependencies]
-linux-sysno = "0.2.1"
-linux-errnos = "0.1.0"
+linux-sysno = "0.2.2"
+linux-errnos = { version = "0.1.1", default-features = false }
 linux-raw-vdso = { git = "https://github.com/shurizzle/linux-raw-vdso" }

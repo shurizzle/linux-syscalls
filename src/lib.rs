@@ -4,7 +4,7 @@
 mod bitflags;
 
 #[cfg(target_os = "linux")]
-pub use linux_errno::Errno;
+pub use linux_errnos::Errno;
 #[cfg(target_os = "linux")]
 pub use linux_sysno::Sysno;
 
