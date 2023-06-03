@@ -12,7 +12,6 @@
 **Tier 2**
 - arm-unknown-linux-gnueabi
 - arm-unknown-linux-gnueabihf
-- armv4t-unknown-linux-gnueabi
 - armv7-unknown-linux-gnueabihf
 - thumbv7neon-unknown-linux-gnueabihf
 - riscv64gc-unknown-linux-gnu
@@ -33,7 +32,7 @@
 ```bash
 rustc +nightly --print target-list | \
     grep -P -- '-linux(-|$)' | \
-    grep -vP '^((x86(_64)?|s390x|aarch64|i[56]86|mips|powerpc64|riscv64gc|loongarch64)-unknown-linux-gnu|(arm(v4t|v5te|v7)?|thumbv7neon)-unknown-linux-gnueabi(hf)?|mips64-unknown-linux-gnuabi64)$'
+    grep -vP '^((x86(_64)?|s390x|aarch64|i[56]86|mips|powerpc64|riscv64gc|loongarch64)-unknown-linux-gnu|(arm(v5te|v7)?|thumbv7neon)-unknown-linux-gnueabi(hf)?|mips64-unknown-linux-gnuabi64)$'
 ```
 
 ### MSRV
