@@ -2,10 +2,6 @@
 
 set -eux
 
-if [ -e "/env.sh" ]; then
-	. /env.sh
-fi
-
 MARCH="$ARCH"
 FARCH="$ARCH"
 ABI=gnu

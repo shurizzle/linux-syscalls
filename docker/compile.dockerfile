@@ -8,7 +8,7 @@ ADD /docker/entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /install.sh && \
   chmod +x /compile.sh && \
-  /install.sh $ARCH && \
+  env ENVFILE=/env.sh /install.sh $ARCH && \
   rm -f /install.sh && \
   mkdir -p /project && \
   apt-get clean autoclean && \
