@@ -15,7 +15,7 @@ if ! (docker images --format '{{.Repository}}' | grep "^linux-syscalls/$ARCH\$")
 fi
 
 tty=
-if [ $# -eq 0 ]; then
+if [ -t 0 ]; then
 	tty=-it
 fi
 

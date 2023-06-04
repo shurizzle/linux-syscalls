@@ -38,8 +38,8 @@ install_rust() {
 		./rustup-init -y --no-modify-path --default-toolchain "$stable"
 		PATH="$PATH:/opt/rust/bin"
 		(
-			echo 'RUSTUP_HOME="/opt/rust"'
-			echo 'PATH="$PATH:/opt/rust/bin"'
+			echo 'RUSTUP_HOME=/opt/rust'
+			echo "PATH=$PATH:/opt/rust/bin"
 		) >>"$ENVFILE"
 
 		rm -f rustup-init
@@ -121,9 +121,12 @@ setup_x86_64() {
 	local libc
 
 	common_install 1.40.0 qemu-user gcc-x86-64-linux-gnu
+	rustup toolchain install 1.59.0
 
 	for libc in gnu; do
 		rustup target add "x86_64-unknown-linux-${libc}" --toolchain 1.40.0
+		rustup target add "x86_64-unknown-linux-${libc}" --toolchain 1.59.0
+		rustup target add "x86_64-unknown-linux-${libc}" --toolchain nightly
 	done
 }
 
@@ -131,14 +134,17 @@ setup_x86() {
 	local arch libc triple
 
 	common_install 1.40.0 qemu-user gcc-i686-linux-gnu
+	rustup toolchain install 1.59.0
 
 	for arch in i686 i586; do
 		for libc in gnu; do
 			triple="${arch}-unknown-linux-${libc}"
 			rustup target add "$triple" --toolchain 1.40.0
+			rustup target add "$triple" --toolchain 1.59.0
+			rustup target add "$triple" --toolchain nightly
 
 			set_env "$triple" \
-				"${arch}-linux-${libc}-" \
+				"i686-linux-${libc}-" \
 				"qemu-i386 -L /usr/i686-linux-${libc}"
 		done
 	done
@@ -148,11 +154,14 @@ setup_arm() {
 	local arch libc triple
 
 	common_install 1.40.0 qemu-user gcc-arm-linux-gnueabi{,hf}
+	rustup toolchain install 1.59.0
 
 	for arch in arm armv5te armv7; do
 		for libc in gnu; do
 			triple="${arch}-unknown-linux-${libc}eabi"
 			rustup target add "$triple" --toolchain 1.40.0
+			rustup target add "$triple" --toolchain 1.59.0
+			rustup target add "$triple" --toolchain nightly
 
 			set_env "$triple" \
 				"arm-linux-${libc}eabi-" \
@@ -164,6 +173,8 @@ setup_arm() {
 		for libc in gnu; do
 			triple="${arch}-unknown-linux-${libc}eabihf"
 			rustup target add "$triple" --toolchain 1.40.0
+			rustup target add "$triple" --toolchain 1.59.0
+			rustup target add "$triple" --toolchain nightly
 
 			set_env "$triple" \
 				"arm-linux-${libc}eabihf-" \
@@ -176,11 +187,14 @@ setup_aarch64() {
 	local libc triple
 
 	common_install 1.40.0 qemu-user gcc-aarch64-linux-gnu
+	rustup toolchain install 1.59.0
 
 	for libc in gnu; do
 		triple="aarch64-unknown-linux-${libc}"
 
 		rustup target add "$triple" --toolchain 1.40.0
+		rustup target add "$triple" --toolchain 1.59.0
+		rustup target add "$triple" --toolchain nightly
 
 		set_env "$triple" \
 			"aarch64-linux-${libc}-" \
@@ -192,10 +206,13 @@ setup_riscv64() {
 	local libc triple
 
 	common_install 1.42.0 qemu-user gcc-riscv64-linux-gnu
+	rustup toolchain install 1.59.0
 
 	for libc in gnu; do
 		triple="riscv64gc-unknown-linux-${libc}"
 		rustup target add "$triple" --toolchain 1.42.0
+		rustup target add "$triple" --toolchain 1.59.0
+		rustup target add "$triple" --toolchain nightly
 
 		set_env "$triple" \
 			"riscv64-linux-${libc}-" \
@@ -212,6 +229,7 @@ setup_powerpc64() {
 	for libc in gnu; do
 		triple="powerpc64-unknown-linux-${libc}"
 		rustup target add "$triple" --toolchain 1.40.0
+		rustup target add "$triple" --toolchain nightly
 
 		set_env "$triple" \
 			"powerpc64-linux-${libc}-" \
@@ -228,6 +246,7 @@ setup_mips() {
 		for libc in gnu; do
 			triple="${arch}-unknown-linux-${libc}"
 			rustup target add "$triple" --toolchain 1.40.0
+			rustup target add "$triple" --toolchain nightly
 
 			set_env "$triple" \
 				"${arch}-linux-${libc}-" \
@@ -246,6 +265,7 @@ setup_mips64() {
 		for libc in gnu; do
 			triple="${arch}-unknown-linux-${libc}abi64"
 			rustup target add "$triple" --toolchain 1.40.0
+			rustup target add "$triple" --toolchain nightly
 
 			set_env "$triple" \
 				"${arch}-linux-${libc}abi64-" \
@@ -262,6 +282,7 @@ setup_s390x() {
 	for libc in gnu; do
 		triple="s390x-unknown-linux-${libc}"
 		rustup target add "$triple" --toolchain 1.40.0
+		rustup target add "$triple" --toolchain nightly
 
 		set_env "$triple" \
 			"s390x-linux-${libc}-" \

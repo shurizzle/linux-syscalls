@@ -1,5 +1,12 @@
 #!/bin/bash
 
+SCRIPTPATH="$(
+	cd -- "$(dirname "$0")" >/dev/null 2>&1 || true
+	pwd -P
+)"
+
+cd "${SCRIPTPATH}/.."
+
 set -eux
 
 rustup toolchain install 1.40.0

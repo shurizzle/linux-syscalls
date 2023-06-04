@@ -7,7 +7,4 @@ SCRIPTPATH="$(
 
 set -eux
 
-ARCH="$1"
-shift
-
-"$SCRIPTPATH/docker-run.sh" "$ARCH" /compile.sh "$@"
+exec "$SCRIPTPATH/docker-run.sh" "$1" ./scripts/test.sh "$@"

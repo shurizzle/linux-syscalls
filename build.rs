@@ -19,6 +19,12 @@ fn main() {
     println!("cargo:rerun-if-env-changed=CARGO_CFG_TARGET_ARCH");
     println!("cargo:rerun-if-env-changed=RUSTFLAGS");
 
+    if std::env::var("CARGO_CFG_OUTLINE_SYSCALLS").is_ok()
+        && std::env::var("CARGO_CFG_FORCE_INLINE_SYSCALLS").is_ok()
+    {
+        panic!("`--cfg outline_syscalls` and `--cfg force_inline_syscalls` are mutually exclusive");
+    }
+
     let arch = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
     let pointer_width = std::env::var("CARGO_CFG_TARGET_POINTER_WIDTH").unwrap();
     let endian = std::env::var("CARGO_CFG_TARGET_ENDIAN").unwrap();
@@ -131,7 +137,9 @@ fn needs_outline_asm<T: fmt::Display>(instruction: T, metadata_only: bool) -> bo
                 false
             }
             ASM::Outline => {
-                use_feature("outline_syscalls");
+                if std::env::var("CARGO_CFG_FORCE_INLINE_SYSCALLS").is_err() {
+                    use_feature("outline_syscalls");
+                }
                 true
             }
         }

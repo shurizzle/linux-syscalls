@@ -7,5 +7,5 @@ set -eux
 if [ $# -eq 0 ]; then
 	exec /bin/bash
 else
-	exec "$@"
+	exec env "$@"
 fi
