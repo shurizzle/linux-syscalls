@@ -45,6 +45,7 @@ cargo_test() {
 }
 
 test_nightly() {
+	rm -rf "target/$1"
 	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test nightly "$@"
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test nightly "$@"
 }
@@ -52,6 +53,12 @@ test_nightly() {
 test_stable() {
 	rm -rf "target/$1"
 	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test 1.59.0 "$@"
+	RUSTFLAGS="--cfg outline_syscalls" cargo_test "${3:-1.40.0}" "$@"
+	test_nightly "$@"
+}
+
+test_unstable() {
+	rm -rf "target/$1"
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test "${3:-1.40.0}" "$@"
 	test_nightly "$@"
 }
@@ -105,9 +112,49 @@ test_aarch64() {
 test_riscv64() {
 	local libc triple
 	for libc in gnu; do
-		triple="riscv64-unknown-linux-${libc}"
-		test_stable "$triple" aarch64 1.42.0
+		triple="riscv64gc-unknown-linux-${libc}"
+		test_stable "$triple" riscv64 1.42.0
 	done
 }
+
+test_loongarch64() {
+	test_nightly "loongarch64-unknown-linux-gnu" loongarch64
+}
+
+test_powerpc64() {
+	local arch libc
+	for arch in powerpc64 powerpc64le; do
+		for libc in gnu; do
+			test_unstable "${arch}-unknown-linux-gnu" powerpc64
+		done
+	done
+}
+
+test_mips() {
+	local arch libc
+	for arch in mips mipsel; do
+		for libc in gnu; do
+			test_unstable "${arch}-unknown-linux-gnu" mips
+		done
+	done
+}
+
+test_mips64() {
+	local arch libc
+	for arch in mips64 mips64el; do
+		for libc in gnu; do
+			test_unstable "${arch}-unknown-linux-gnuabi64" mips64
+		done
+	done
+}
+
+test_s390x() {
+	local libc
+	for libc in gnu; do
+		test_unstable "s390x-unknown-linux-gnu" s390x
+	done
+}
+
+# TODO: powerpc riscv32
 
 test_"$1"

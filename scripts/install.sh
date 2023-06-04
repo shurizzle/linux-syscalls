@@ -234,6 +234,14 @@ setup_powerpc64() {
 		set_env "$triple" \
 			"powerpc64-linux-${libc}-" \
 			"qemu-ppc64 -L /usr/powerpc64-linux-${libc}"
+
+		triple="powerpc64le-unknown-linux-${libc}"
+		rustup target add "$triple" --toolchain 1.40.0
+		rustup target add "$triple" --toolchain nightly
+
+		set_env "$triple" \
+			"powerpc64le-linux-${libc}-" \
+			"qemu-ppc64le -L /usr/powerpc64le-linux-${libc}"
 	done
 }
 
@@ -289,5 +297,7 @@ setup_s390x() {
 			"qemu-s390x -L /usr/s390x-linux-${libc}"
 	done
 }
+
+# TODO: powerpc riscv32
 
 "setup_${ARCH}"
