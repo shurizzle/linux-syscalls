@@ -220,15 +220,35 @@ setup_riscv64() {
 	done
 }
 
+setup_powerpc() {
+	local libc triple
+
+	common_install 1.40.0 qemu-user gcc-powerpc-linux-gnu
+	rustup toolchain install 1.59.0
+
+	for libc in gnu; do
+		triple="powerpc-unknown-linux-${libc}"
+		rustup target add "$triple" --toolchain 1.40.0
+		rustup target add "$triple" --toolchain 1.59.0
+		rustup target add "$triple" --toolchain nightly
+
+		set_env "$triple" \
+			"powerpc-linux-${libc}-" \
+			"qemu-ppc -L /usr/powerpc-linux-${libc}"
+	done
+}
+
 setup_powerpc64() {
 	local libc triple
 
 	common_install 1.40.0 qemu-user gcc-powerpc64-linux-gnu \
 		gcc-powerpc64le-linux-gnu
+	rustup toolchain install 1.59.0
 
 	for libc in gnu; do
 		triple="powerpc64-unknown-linux-${libc}"
 		rustup target add "$triple" --toolchain 1.40.0
+		rustup target add "$triple" --toolchain 1.59.0
 		rustup target add "$triple" --toolchain nightly
 
 		set_env "$triple" \
@@ -237,6 +257,7 @@ setup_powerpc64() {
 
 		triple="powerpc64le-unknown-linux-${libc}"
 		rustup target add "$triple" --toolchain 1.40.0
+		rustup target add "$triple" --toolchain 1.59.0
 		rustup target add "$triple" --toolchain nightly
 
 		set_env "$triple" \
@@ -249,11 +270,13 @@ setup_mips() {
 	local libc arch triple
 
 	common_install 1.40.0 qemu-user gcc-mips-linux-gnu gcc-mipsel-linux-gnu
+	rustup toolchain install 1.59.0
 
 	for arch in mips mipsel; do
 		for libc in gnu; do
 			triple="${arch}-unknown-linux-${libc}"
 			rustup target add "$triple" --toolchain 1.40.0
+			rustup target add "$triple" --toolchain 1.59.0
 			rustup target add "$triple" --toolchain nightly
 
 			set_env "$triple" \
@@ -268,11 +291,13 @@ setup_mips64() {
 
 	common_install 1.40.0 qemu-user gcc-mips64-linux-gnuabi64 \
 		gcc-mips64el-linux-gnuabi64
+	rustup toolchain install 1.59.0
 
 	for arch in mips64 mips64el; do
 		for libc in gnu; do
 			triple="${arch}-unknown-linux-${libc}abi64"
 			rustup target add "$triple" --toolchain 1.40.0
+			rustup target add "$triple" --toolchain 1.59.0
 			rustup target add "$triple" --toolchain nightly
 
 			set_env "$triple" \
@@ -286,10 +311,12 @@ setup_s390x() {
 	local libc triple
 
 	common_install 1.40.0 qemu-user gcc-s390x-linux-gnu
+	rustup toolchain install 1.59.0
 
 	for libc in gnu; do
 		triple="s390x-unknown-linux-${libc}"
 		rustup target add "$triple" --toolchain 1.40.0
+		rustup target add "$triple" --toolchain 1.59.0
 		rustup target add "$triple" --toolchain nightly
 
 		set_env "$triple" \
@@ -298,6 +325,6 @@ setup_s390x() {
 	done
 }
 
-# TODO: powerpc riscv32
+# TODO: riscv32
 
 "setup_${ARCH}"

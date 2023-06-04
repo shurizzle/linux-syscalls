@@ -8,7 +8,8 @@ SCRIPTPATH="$(
 )"
 
 if [ $# -eq 0 ]; then
-	set -- arm loongarch64 x86_64 x86 aarch64 riscv64 powerpc64 mips mips64 s390x
+	set -- arm loongarch64 x86_64 x86 aarch64 riscv64 powerpc powerpc64 mips \
+		mips64 s390x
 fi
 
 while [ $# -ne 0 ]; do

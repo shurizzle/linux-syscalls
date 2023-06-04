@@ -59,6 +59,7 @@ test_stable() {
 
 test_unstable() {
 	rm -rf "target/$1"
+	RUSTFLAGS="--cfg outline_syscalls" cargo_test 1.59.0 "$@"
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test "${3:-1.40.0}" "$@"
 	test_nightly "$@"
 }
@@ -121,6 +122,13 @@ test_loongarch64() {
 	test_nightly "loongarch64-unknown-linux-gnu" loongarch64
 }
 
+test_powerpc() {
+	local libc
+	for libc in gnu; do
+		test_unstable "powerpc-unknown-linux-gnu" powerpc
+	done
+}
+
 test_powerpc64() {
 	local arch libc
 	for arch in powerpc64 powerpc64le; do
@@ -155,6 +163,6 @@ test_s390x() {
 	done
 }
 
-# TODO: powerpc riscv32
+# TODO: riscv32
 
 test_"$1"
