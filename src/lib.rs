@@ -1,94 +1,226 @@
+#![cfg(target_os = "linux")]
 #![no_std]
 #![cfg_attr(asm_experimental_arch, feature(asm_experimental_arch))]
 
 mod bitflags;
 
-#[cfg(target_os = "linux")]
 pub use linux_errnos::Errno;
-#[cfg(target_os = "linux")]
 pub use linux_sysno::Sysno;
 
-#[cfg(target_os = "linux")]
 pub mod env;
-
-#[cfg(target_os = "linux")]
 mod init;
 
-#[cfg(all(target_os = "linux", not(feature = "bare")))]
+#[cfg(not(feature = "bare"))]
 pub use init::init;
-#[cfg(all(target_os = "linux", feature = "bare"))]
+#[cfg(feature = "bare")]
 pub use init::{init_from_args, init_from_environ};
 
-#[cfg(all(target_os = "linux", outline_syscalls))]
+#[cfg(outline_syscalls)]
 #[cfg_attr(
     any(
-        target_arch = "x86_64",
-        target_arch = "aarch64",
-        target_arch = "arm",
-        target_arch = "riscv64",
-        target_arch = "mips",
-        target_arch = "mips64",
-        target_arch = "s390x",
-        target_arch = "loongarch64"
+        all(target_arch = "x86_64", target_endian = "little"),
+        all(target_arch = "aarch64", target_pointer_width = "64"),
+        all(target_arch = "arm", target_pointer_width = "32"),
+        all(
+            target_arch = "riscv64",
+            target_endian = "little",
+            target_pointer_width = "64"
+        ),
+        all(
+            target_arch = "riscv32",
+            target_endian = "little",
+            target_pointer_width = "32"
+        ),
+        all(target_arch = "mips", target_pointer_width = "32"),
+        all(target_arch = "mips64", target_pointer_width = "64"),
+        all(
+            target_arch = "s390x",
+            target_endian = "big",
+            target_pointer_width = "64"
+        ),
+        all(
+            target_arch = "loongarch64",
+            target_endian = "little",
+            target_pointer_width = "64"
+        ),
+        all(
+            target_arch = "powerpc",
+            target_endian = "big",
+            target_pointer_width = "32"
+        )
     ),
     path = "outline/common.rs"
 )]
-#[cfg_attr(target_arch = "x86", path = "outline/x86.rs")]
-#[cfg_attr(target_arch = "powerpc64", path = "outline/powerpc64.rs")]
-mod arch;
-
-#[cfg(all(target_os = "linux", not(outline_syscalls)))]
-#[cfg_attr(all(target_arch = "arm", not(thumb_mode)), path = "inline/arm.rs")]
-#[cfg_attr(all(target_arch = "arm", thumb_mode), path = "inline/thumb.rs")]
-#[cfg_attr(target_arch = "aarch64", path = "inline/aarch64.rs")]
-#[cfg_attr(target_arch = "x86_64", path = "inline/x86_64.rs")]
-#[cfg_attr(target_arch = "x86", path = "inline/x86.rs")]
-#[cfg_attr(target_arch = "riscv64", path = "inline/riscv64.rs")]
-#[cfg_attr(target_arch = "powerpc64", path = "inline/powerpc64.rs")]
-#[cfg_attr(target_arch = "mips", path = "inline/mips.rs")]
-#[cfg_attr(target_arch = "mips64", path = "inline/mips64.rs")]
-#[cfg_attr(target_arch = "s390x", path = "inline/s390x.rs")]
-#[cfg_attr(target_arch = "loongarch64", path = "inline/loongarch64.rs")]
-mod arch;
-
-#[cfg(all(target_os = "linux", target_arch = "powerpc64"))]
-pub use arch::has_scv;
-#[cfg(all(
-    target_os = "linux",
-    any(
-        target_arch = "x86_64",
+#[cfg_attr(
+    all(
         target_arch = "x86",
-        target_arch = "aarch64",
-        target_arch = "arm",
-        target_arch = "riscv64",
-        target_arch = "powerpc64",
-        target_arch = "mips",
-        target_arch = "mips64",
+        target_endian = "little",
+        target_pointer_width = "32"
+    ),
+    path = "outline/x86.rs"
+)]
+#[cfg_attr(
+    all(target_arch = "powerpc64", target_pointer_width = "64"),
+    path = "outline/powerpc64.rs"
+)]
+mod arch;
+
+#[cfg(not(outline_syscalls))]
+#[cfg_attr(
+    all(target_arch = "arm", target_pointer_width = "32", not(thumb_mode)),
+    path = "inline/arm.rs"
+)]
+#[cfg_attr(
+    all(target_arch = "arm", target_pointer_width = "32", thumb_mode),
+    path = "inline/thumb.rs"
+)]
+#[cfg_attr(
+    all(target_arch = "aarch64", target_pointer_width = "64"),
+    path = "inline/aarch64.rs"
+)]
+#[cfg_attr(
+    all(target_arch = "x86_64", target_endian = "little"),
+    path = "inline/x86_64.rs"
+)]
+#[cfg_attr(
+    all(
+        target_arch = "x86",
+        target_endian = "little",
+        target_pointer_width = "32"
+    ),
+    path = "inline/x86.rs"
+)]
+#[cfg_attr(
+    any(
+        all(
+            target_arch = "riscv32",
+            target_endian = "little",
+            target_pointer_width = "32"
+        ),
+        all(
+            target_arch = "riscv64",
+            target_endian = "little",
+            target_pointer_width = "64"
+        )
+    ),
+    path = "inline/riscv.rs"
+)]
+#[cfg_attr(
+    all(target_arch = "powerpc64", target_pointer_width = "64"),
+    path = "inline/powerpc64.rs"
+)]
+#[cfg_attr(
+    all(target_arch = "mips", target_pointer_width = "32"),
+    path = "inline/mips.rs"
+)]
+#[cfg_attr(
+    all(target_arch = "mips64", target_pointer_width = "64"),
+    path = "inline/mips64.rs"
+)]
+#[cfg_attr(
+    all(
         target_arch = "s390x",
-        target_arch = "loongarch64"
-    )
+        target_endian = "big",
+        target_pointer_width = "64"
+    ),
+    path = "inline/s390x.rs"
+)]
+#[cfg_attr(
+    all(
+        target_arch = "loongarch64",
+        target_endian = "little",
+        target_pointer_width = "64"
+    ),
+    path = "inline/loongarch64.rs"
+)]
+mod arch;
+
+#[cfg(all(target_arch = "powerpc64", target_pointer_width = "64"))]
+pub use arch::has_scv;
+
+#[cfg(any(
+    all(target_arch = "x86_64", target_endian = "little"),
+    all(target_arch = "aarch64", target_pointer_width = "64"),
+    all(target_arch = "arm", target_pointer_width = "32"),
+    all(
+        target_arch = "riscv64",
+        target_endian = "little",
+        target_pointer_width = "64"
+    ),
+    all(
+        target_arch = "riscv32",
+        target_endian = "little",
+        target_pointer_width = "32"
+    ),
+    all(target_arch = "mips", target_pointer_width = "32"),
+    all(target_arch = "mips64", target_pointer_width = "64"),
+    all(
+        target_arch = "s390x",
+        target_endian = "big",
+        target_pointer_width = "64"
+    ),
+    all(
+        target_arch = "loongarch64",
+        target_endian = "little",
+        target_pointer_width = "64"
+    ),
+    all(
+        target_arch = "x86",
+        target_endian = "little",
+        target_pointer_width = "32"
+    ),
+    all(
+        target_arch = "powerpc",
+        target_endian = "big",
+        target_pointer_width = "32"
+    ),
+    all(target_arch = "powerpc64", target_pointer_width = "64"),
 ))]
 pub use arch::{
     syscall0, syscall0_readonly, syscall1, syscall1_noreturn, syscall1_readonly, syscall2,
     syscall2_readonly, syscall3, syscall3_readonly, syscall4, syscall4_readonly, syscall5,
     syscall5_readonly, syscall6, syscall6_readonly,
 };
-#[cfg(all(target_os = "linux", target_arch = "mips"))]
+#[cfg(all(target_arch = "mips", target_pointer_width = "32"))]
 pub use arch::{syscall7, syscall7_readonly};
 
-#[cfg(all(
-    target_os = "linux",
-    any(
-        target_arch = "x86_64",
-        target_arch = "x86",
-        target_arch = "aarch64",
-        target_arch = "arm",
+#[cfg(any(
+    all(target_arch = "x86_64", target_endian = "little"),
+    all(target_arch = "aarch64", target_pointer_width = "64"),
+    all(target_arch = "arm", target_pointer_width = "32"),
+    all(
         target_arch = "riscv64",
-        target_arch = "powerpc64",
-        target_arch = "mips64",
+        target_endian = "little",
+        target_pointer_width = "64"
+    ),
+    all(
+        target_arch = "riscv32",
+        target_endian = "little",
+        target_pointer_width = "32"
+    ),
+    all(target_arch = "mips", target_pointer_width = "32"),
+    all(target_arch = "mips64", target_pointer_width = "64"),
+    all(
         target_arch = "s390x",
-        target_arch = "loongarch64"
-    )
+        target_endian = "big",
+        target_pointer_width = "64"
+    ),
+    all(
+        target_arch = "loongarch64",
+        target_endian = "little",
+        target_pointer_width = "64"
+    ),
+    all(
+        target_arch = "x86",
+        target_endian = "little",
+        target_pointer_width = "32"
+    ),
+    all(
+        target_arch = "powerpc",
+        target_endian = "big",
+        target_pointer_width = "32"
+    ),
+    all(target_arch = "powerpc64", target_pointer_width = "64"),
 ))]
 #[macro_export]
 macro_rules! syscall {
@@ -181,7 +313,7 @@ macro_rules! syscall {
     };
 }
 
-#[cfg(all(target_os = "linux", target_arch = "mips"))]
+#[cfg(all(target_arch = "mips", target_pointer_width = "32"))]
 #[macro_export]
 macro_rules! syscall {
     ([ro] $sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr, $arg5:expr, $arg6:expr $(,)?) => {

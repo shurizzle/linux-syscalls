@@ -34,7 +34,9 @@ fn main() {
         "x86" if pointer_width == "32" && endian == "little" => main_x86(),
         "aarch64" if pointer_width == "64" && endian == "little" => main_aarch64(),
         "arm" if pointer_width == "32" && endian == "little" => main_arm(),
-        "riscv64" if pointer_width == "64" && endian == "little" => main_riscv64(),
+        "riscv32" if pointer_width == "32" && endian == "little" => main_riscv(),
+        "riscv64" if pointer_width == "64" && endian == "little" => main_riscv(),
+        "powerpc" if pointer_width == "64" && endian == "big" => main_powerpc(),
         "powerpc64" if pointer_width == "64" => main_powerpc64(),
         "mips" if pointer_width == "32" => main_mips(),
         "mips64" if pointer_width == "64" => main_mips64(),
@@ -76,9 +78,15 @@ fn main_arm() {
     }
 }
 
-fn main_riscv64() {
+fn main_riscv() {
     if needs_outline_asm("unimpl", true) {
-        build_trampoline("riscv64")
+        build_trampoline("riscv")
+    }
+}
+
+fn main_powerpc() {
+    if needs_outline_asm("trap", true) {
+        build_trampoline("powerpc")
     }
 }
 
