@@ -24,7 +24,7 @@ targets = [
   "armeb-unknown-linux-gnueabi",
 ]
 rustc-args = ["--cfg", "docs_rs"]
-cargo-args = ["-Z", "build-std=core"]
+cargo-args = ["-Z", "build-std=core", "--no-deps"]
 
 [[example]]
 name = 'x86-bare'

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-eval "$(cat /env.sh | sed 's/^/export /g')"
+eval "$(grep -vP '^\s*($|#)' /env.sh | sed -e '/^#/d;/^\s*$/d' -e "s/'/'\\\''/g" -e "s/=\(.*\)/='\1'/g" -e 's/^/export /')"
 
 set -eux
 

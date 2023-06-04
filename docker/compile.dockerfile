@@ -17,3 +17,4 @@ RUN chmod +x /install.sh && \
 
 WORKDIR /project
 ENTRYPOINT ["/entrypoint.sh"]
+cmd ["/bin/bash"]

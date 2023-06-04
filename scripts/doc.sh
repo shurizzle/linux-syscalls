@@ -41,8 +41,8 @@ RUSTFLAGS="--cfg docs_rs" cargo +1.42.0 doc --no-deps --target riscv64gc-unknown
 
 RUSTFLAGS="--cfg docs_rs" cargo +nightly doc --no-deps --target loongarch64-unknown-linux-gnu
 
-# for target in \
 # 	riscv32gc-unknown-linux-gnu \
-# 	armeb-unknown-linux-gnueabi; do
-# 	RUSTFLAGS="--cfg docs_rs" cargo +nightly -Z build-std=core doc --no-deps --target "$target"
-# done
+for target in \
+	armeb-unknown-linux-gnueabi; do
+	RUSTFLAGS="--cfg docs_rs" cargo +nightly -Z build-std=core doc --no-deps --target "$target"
+done
