@@ -198,7 +198,6 @@ pub use arch::{syscall7, syscall7_readonly};
         target_endian = "little",
         target_pointer_width = "32"
     ),
-    all(target_arch = "mips", target_pointer_width = "32"),
     all(target_arch = "mips64", target_pointer_width = "64"),
     all(
         target_arch = "s390x",
