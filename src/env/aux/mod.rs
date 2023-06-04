@@ -167,5 +167,5 @@ pub(crate) static mut AUXV: [Option<aux_t>; KEYS_LEN] = [None; KEYS_LEN];
 
 #[inline]
 pub(crate) unsafe fn get<T: VdsoKey>() -> Option<T::Item> {
-    unsafe { AUXV.get_unchecked(T::N).map(<T::Item as AuxValue>::from) }
+    AUXV.get_unchecked(T::N).map(<T::Item as AuxValue>::from)
 }
