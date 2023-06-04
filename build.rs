@@ -5,7 +5,12 @@ fn main() {
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-env-changed=TARGET");
     println!("cargo:rerun-if-env-changed=CARGO_CFG_TARGET_OS");
-    println!("cargo:rerun-if-env-changed=CARGO_CFG_FORCE_SYSCALLS_REBUILD");
+
+    println!("cargo:rerun-if-env-changed=CARGO_CFG_DOCS_RS");
+    if std::env::var("CARGO_CFG_DOCS_RS").is_ok() {
+        use_feature("outline_syscalls");
+        return;
+    }
 
     if std::env::var("CARGO_CFG_TARGET_OS").unwrap() != "linux" {
         return;
@@ -24,9 +29,9 @@ fn main() {
         "aarch64" if pointer_width == "64" && endian == "little" => main_aarch64(),
         "arm" if pointer_width == "32" && endian == "little" => main_arm(),
         "riscv64" if pointer_width == "64" && endian == "little" => main_riscv64(),
-        "powerpc64" if pointer_width == "64" && endian == "big" => main_powerpc64(),
-        "mips" if pointer_width == "32" && endian == "big" => main_mips(),
-        "mips64" if pointer_width == "64" && endian == "big" => main_mips64(),
+        "powerpc64" if pointer_width == "64" => main_powerpc64(),
+        "mips" if pointer_width == "32" => main_mips(),
+        "mips64" if pointer_width == "64" => main_mips64(),
         "s390x" if pointer_width == "64" && endian == "big" => main_s390x(),
         "loongarch64" if pointer_width == "64" && endian == "little" => main_loongarch64(),
         _ => {
@@ -106,26 +111,12 @@ fn has_thumb_mode() -> bool {
 }
 
 fn build_trampoline(arch: &str) {
-    build_trampoline_with_source(arch, arch)
-}
-
-fn build_trampoline_with_source(arch: &str, source: &str) {
-    if std::env::var("CARGO_CFG_FORCE_SYSCALLS_REBUILD").is_ok() {
-        println!("cargo:rerun-if-changed=src/outline/{}.s", source);
-        cc::Build::new()
-            .cargo_metadata(true)
-            .emit_rerun_if_env_changed(true)
-            .file(format!("src/outline/{}.s", source))
-            .compile("liblinux_syscalls_rs.a");
-    } else {
-        let profile = std::env::var("PROFILE").unwrap();
-        println!(
-            "cargo:rerun-if-changed=src/outline/{}/{}/liblinux_syscalls_rs.s",
-            profile, arch
-        );
-        println!("cargo:rustc-link-search=src/outline/{}/{}", profile, arch);
-        println!("cargo:rustc-link-lib=static=linux_syscalls_rs");
-    }
+    println!("cargo:rerun-if-changed=src/outline/{}.s", arch);
+    cc::Build::new()
+        .cargo_metadata(true)
+        .emit_rerun_if_env_changed(true)
+        .file(format!("src/outline/{}.s", arch))
+        .compile("liblinux_syscalls_rs.a");
 }
 
 fn needs_outline_asm<T: fmt::Display>(instruction: T, metadata_only: bool) -> bool {

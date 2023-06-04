@@ -1,7 +1,6 @@
 use core::cell::UnsafeCell;
 
 #[non_exhaustive]
-#[repr(transparent)]
 pub struct Vdso {}
 
 unsafe impl Send for Vdso {}

@@ -5,13 +5,67 @@ set -eux
 ARCH="$1"
 shift
 
-remove_wget=false
-if ! which wget 2>/dev/null >/dev/null; then
-	remove_wget=true
+sudo=
+if [ "${CI:-false}" = true ]; then
+	sudo=sudo
 fi
-apt-get -y update
-apt-get -y upgrade
-apt-get -y install build-essential wget
+
+$sudo apt-get update -y
+if [ "${CI:-false}" != true ]; then
+	$sudo apt-get upgrade -y
+fi
+
+install_wget() {
+	if ! which wget 2>/dev/null >/dev/null; then
+		$sudo apt-get install -y wget
+		$sudo apt-mark auto wget
+	fi
+}
+
+install_rust() {
+	local stable="$1"
+
+	if ! which rustup 2>/dev/null >/dev/null; then
+		install_wget
+
+		RUSTUP_HOME="/opt/rust"
+		export RUSTUP_HOME
+		CARGO_HOME="/opt/rust"
+		export CARGO_HOME
+		cd
+		wget https://sh.rustup.rs -O rustup-init
+		chmod +x rustup-init
+		./rustup-init -y --no-modify-path --default-toolchain "$stable"
+		PATH="$PATH:/opt/rust/bin"
+		(
+			echo 'RUSTUP_HOME="/opt/rust"'
+			echo 'PATH="$PATH:/opt/rust/bin"'
+		) >>"$ENVFILE"
+
+		rm -f rustup-init
+	else
+		rustup toolchain install "$stable"
+	fi
+	rustup toolchain install nightly
+	rustup component add rust-src --toolchain nightly
+}
+
+common_install() {
+	local rust_stable="$1"
+	shift
+
+	local mark_wget=false
+	if ! which wget 2>/dev/null >/dev/null; then
+		mark_wget=true
+	fi
+
+	$sudo apt-get install -y build-essential wget "$@"
+	if $mark_wget; then
+		$sudo apt-mark auto wget
+	fi
+
+	install_rust "$rust_stable"
+}
 
 set_env() {
 	local triple="$1" \
@@ -24,16 +78,18 @@ set_env() {
 	ucase_triple="$(printf %s "$triple" | tr 'a-z-' 'A-Z_')"
 
 	(
-		echo "CC_${lcase_triple}=\"${prefix}gcc\""
-		echo "CXX_${lcase_triple}=\"${prefix}g++\""
-		echo "AR_${lcase_triple}=\"${prefix}ar\""
-		echo "CARGO_TARGET_${ucase_triple}_LINKER=\"${prefix}gcc\""
-		echo "CARGO_TARGET_${ucase_triple}_RUNNER=\"$runner\""
+		echo "CC_${lcase_triple}=${prefix}gcc"
+		echo "CXX_${lcase_triple}=${prefix}g++"
+		echo "AR_${lcase_triple}=${prefix}ar"
+		echo "CARGO_TARGET_${ucase_triple}_LINKER=${prefix}gcc"
+		echo "CARGO_TARGET_${ucase_triple}_RUNNER=$runner"
 	) >>"$ENVFILE"
 }
 
 setup_loongarch64() {
 	cd
+
+	common_install nightly
 
 	# install toolchain
 	wget https://github.com/loongson/build-tools/releases/download/2022.09.06/loongarch64-clfs-6.3-cross-tools-gcc-glibc.tar.xz
@@ -56,14 +112,15 @@ setup_loongarch64() {
 	for tool in addr2line ar as c++ c++filt cpp elfedit g++ gcc gcc-ar gcc-nm \
 		gcc-ranlib gcov gcov-dump gcov-tool gprof ld ld.bfd lto-dump nm objcopy \
 		objdump ranlib readelf size strings strip; do
-		ln -s "/opt/loongarch64-unknown-linux-gnu/bin/loongarch64-unknown-linux-gnu-$tool" "/bin/loongarch64-linux-gnu-$tool"
+		ln -s "/opt/loongarch64-unknown-linux-gnu/bin/loongarch64-unknown-linux-gnu-$tool" \
+			"/bin/loongarch64-linux-gnu-$tool"
 	done
 }
 
 setup_x86_64() {
 	local libc
 
-	apt-get install -y qemu-user gcc-x86-64-linux-gnu
+	common_install 1.40.0 qemu-user gcc-x86-64-linux-gnu
 
 	for libc in gnu; do
 		rustup target add "x86_64-unknown-linux-${libc}"
@@ -73,7 +130,7 @@ setup_x86_64() {
 setup_x86() {
 	local arch libc triple
 
-	apt-get install -y qemu-user gcc-i686-linux-gnu
+	common_install 1.40.0 qemu-user gcc-i686-linux-gnu
 
 	for arch in i686 i586; do
 		for libc in gnu; do
@@ -90,7 +147,7 @@ setup_x86() {
 setup_arm() {
 	local arch libc triple
 
-	apt-get install -y qemu-user gcc-arm-linux-gnueabi{,hf}
+	common_install 1.40.0 qemu-user gcc-arm-linux-gnueabi{,hf}
 
 	for arch in arm armv5te armv7; do
 		for libc in gnu; do
@@ -118,7 +175,7 @@ setup_arm() {
 setup_aarch64() {
 	local libc triple
 
-	apt-get -y install -y qemu-user gcc-aarch64-linux-gnu
+	common_install 1.40.0 qemu-user gcc-aarch64-linux-gnu
 
 	for libc in gnu; do
 		triple="aarch64-unknown-linux-${libc}"
@@ -134,7 +191,7 @@ setup_aarch64() {
 setup_riscv64() {
 	local libc triple
 
-	apt-get install -y qemu-user gcc-riscv64-linux-gnu
+	common_install 1.42.0 qemu-user gcc-riscv64-linux-gnu
 
 	for libc in gnu; do
 		triple="riscv64gc-unknown-linux-${libc}"
@@ -149,7 +206,8 @@ setup_riscv64() {
 setup_powerpc64() {
 	local libc triple
 
-	apt-get install -y qemu-user gcc-powerpc64-linux-gnu
+	common_install 1.40.0 qemu-user gcc-powerpc64-linux-gnu \
+		gcc-powerpc64le-linux-gnu
 
 	for libc in gnu; do
 		triple="powerpc64-unknown-linux-${libc}"
@@ -162,39 +220,44 @@ setup_powerpc64() {
 }
 
 setup_mips() {
-	local libc triple
+	local libc arch triple
 
-	apt-get install -y qemu-user gcc-mips-linux-gnu
+	common_install 1.40.0 qemu-user gcc-mips-linux-gnu gcc-mipsel-linux-gnu
 
-	for libc in gnu; do
-		triple="mips-unknown-linux-${libc}"
-		rustup target add "$triple"
+	for arch in mips mipsel; do
+		for libc in gnu; do
+			triple="${arch}-unknown-linux-${libc}"
+			rustup target add "$triple"
 
-		set_env "$triple" \
-			"mips-linux-${libc}-" \
-			"qemu-mips -L /usr/mips-linux-${libc}"
+			set_env "$triple" \
+				"${arch}-linux-${libc}-" \
+				"qemu-${arch} -L /usr/${arch}-linux-${libc}"
+		done
 	done
 }
 
 setup_mips64() {
-	local libc triple
+	local libc arch triple
 
-	apt-get install -y qemu-user gcc-mips64-linux-gnuabi64
+	common_install 1.40.0 qemu-user gcc-mips64-linux-gnuabi64 \
+		gcc-mips64el-linux-gnuabi64
 
-	for libc in gnu; do
-		triple="mips64-unknown-linux-${libc}abi64"
-		rustup target add "$triple"
+	for arch in mips64 mipsel; do
+		for libc in gnu; do
+			triple="${arch}-unknown-linux-${libc}abi64"
+			rustup target add "$triple"
 
-		set_env "$triple" \
-			"mips64-linux-${libc}abi64-" \
-			"qemu-mips64 -L /usr/mips-linux-${libc}abi64"
+			set_env "$triple" \
+				"${arch}-linux-${libc}abi64-" \
+				"qemu-${arch} -L /usr/${arch}-linux-${libc}abi64"
+		done
 	done
 }
 
 setup_s390x() {
 	local libc triple
 
-	apt-get install -y qemu-user gcc-s390x-linux-gnu
+	common_install 1.40.0 qemu-user gcc-s390x-linux-gnu
 
 	for libc in gnu; do
 		triple="s390x-unknown-linux-${libc}"
@@ -206,29 +269,4 @@ setup_s390x() {
 	done
 }
 
-if ! which rustup 2>/dev/null >/dev/null; then
-	RUSTUP_HOME="/opt/rust"
-	export RUSTUP_HOME
-	CARGO_HOME="/opt/rust"
-	export CARGO_HOME
-	cd
-	wget https://sh.rustup.rs -O rustup-init
-	chmod +x rustup-init
-	./rustup-init -y --no-modify-path
-	PATH="$PATH:/opt/rust/bin"
-	(
-		echo 'RUSTUP_HOME="/opt/rust"'
-		echo 'PATH="$PATH:/opt/rust/bin"'
-	) >>"$ENVFILE"
-
-	rm -f rustup-init
-fi
-rustup toolchain install nightly
-rustup component add rust-src --toolchain nightly
-
 "setup_${ARCH}"
-
-if $remove_wget; then
-	apt-get -y purge wget
-fi
-apt-get -y autoremove

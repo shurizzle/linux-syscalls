@@ -64,23 +64,25 @@ extern "fastcall" {
     ) -> usize;
 }
 
+use core::ffi::c_void as void;
+
 extern "C" {
-    static mut LINUX_SYSCALLS_RS_VSYSCALL: AtomicPtr<()>;
+    static mut LINUX_SYSCALLS_RS_VSYSCALL: AtomicPtr<void>;
 }
 
-static mut SYSCALL0: AtomicPtr<()> = AtomicPtr::new(linux_syscalls_rs_syscall0 as *mut ());
-static mut SYSCALL1: AtomicPtr<()> = AtomicPtr::new(linux_syscalls_rs_syscall1 as *mut ());
-static mut SYSCALL1_NORETURN: AtomicPtr<()> =
-    AtomicPtr::new(linux_syscalls_rs_syscall1_noreturn as *mut ());
-static mut SYSCALL2: AtomicPtr<()> = AtomicPtr::new(linux_syscalls_rs_syscall2 as *mut ());
-static mut SYSCALL3: AtomicPtr<()> = AtomicPtr::new(linux_syscalls_rs_syscall3 as *mut ());
-static mut SYSCALL4: AtomicPtr<()> = AtomicPtr::new(linux_syscalls_rs_syscall4 as *mut ());
-static mut SYSCALL5: AtomicPtr<()> = AtomicPtr::new(linux_syscalls_rs_syscall5 as *mut ());
-static mut SYSCALL6: AtomicPtr<()> = AtomicPtr::new(linux_syscalls_rs_syscall6 as *mut ());
+static mut SYSCALL0: AtomicPtr<void> = AtomicPtr::new(linux_syscalls_rs_syscall0 as *mut void);
+static mut SYSCALL1: AtomicPtr<void> = AtomicPtr::new(linux_syscalls_rs_syscall1 as *mut void);
+static mut SYSCALL1_NORETURN: AtomicPtr<void> =
+    AtomicPtr::new(linux_syscalls_rs_syscall1_noreturn as *mut void);
+static mut SYSCALL2: AtomicPtr<void> = AtomicPtr::new(linux_syscalls_rs_syscall2 as *mut void);
+static mut SYSCALL3: AtomicPtr<void> = AtomicPtr::new(linux_syscalls_rs_syscall3 as *mut void);
+static mut SYSCALL4: AtomicPtr<void> = AtomicPtr::new(linux_syscalls_rs_syscall4 as *mut void);
+static mut SYSCALL5: AtomicPtr<void> = AtomicPtr::new(linux_syscalls_rs_syscall5 as *mut void);
+static mut SYSCALL6: AtomicPtr<void> = AtomicPtr::new(linux_syscalls_rs_syscall6 as *mut void);
 
 #[inline]
 pub unsafe fn syscall0(sysno: Sysno) -> Result<usize, Errno> {
-    let f = core::mem::transmute::<*mut (), extern "fastcall" fn(usize) -> usize>(
+    let f = core::mem::transmute::<*mut void, extern "fastcall" fn(usize) -> usize>(
         SYSCALL0.load(Ordering::SeqCst),
     );
     Errno::from_ret(f(sysno as usize))
@@ -88,7 +90,7 @@ pub unsafe fn syscall0(sysno: Sysno) -> Result<usize, Errno> {
 
 #[inline]
 pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
-    let f = core::mem::transmute::<*mut (), extern "fastcall" fn(usize, usize) -> usize>(
+    let f = core::mem::transmute::<*mut void, extern "fastcall" fn(usize, usize) -> usize>(
         SYSCALL1.load(Ordering::SeqCst),
     );
     Errno::from_ret(f(arg0, sysno as usize))
@@ -96,7 +98,7 @@ pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
 
 #[inline]
 pub unsafe fn syscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
-    let f = core::mem::transmute::<*mut (), extern "fastcall" fn(usize, usize) -> !>(
+    let f = core::mem::transmute::<*mut void, extern "fastcall" fn(usize, usize) -> !>(
         SYSCALL1_NORETURN.load(Ordering::SeqCst),
     );
     f(arg0, sysno as usize)
@@ -104,7 +106,7 @@ pub unsafe fn syscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
 
 #[inline]
 pub unsafe fn syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
-    let f = core::mem::transmute::<*mut (), extern "fastcall" fn(usize, usize, usize) -> usize>(
+    let f = core::mem::transmute::<*mut void, extern "fastcall" fn(usize, usize, usize) -> usize>(
         SYSCALL2.load(Ordering::SeqCst),
     );
     Errno::from_ret(f(arg1, arg0, sysno as usize))
@@ -118,7 +120,7 @@ pub unsafe fn syscall3(
     arg2: usize,
 ) -> Result<usize, Errno> {
     let f = core::mem::transmute::<
-        *mut (),
+        *mut void,
         extern "fastcall" fn(usize, usize, usize, usize) -> usize,
     >(SYSCALL3.load(Ordering::SeqCst));
     Errno::from_ret(f(arg1, arg2, arg0, sysno as usize))
@@ -133,7 +135,7 @@ pub unsafe fn syscall4(
     arg3: usize,
 ) -> Result<usize, Errno> {
     let f = core::mem::transmute::<
-        *mut (),
+        *mut void,
         extern "fastcall" fn(usize, usize, usize, usize, usize) -> usize,
     >(SYSCALL4.load(Ordering::SeqCst));
     Errno::from_ret(f(arg1, arg2, arg0, arg3, sysno as usize))
@@ -149,7 +151,7 @@ pub unsafe fn syscall5(
     arg4: usize,
 ) -> Result<usize, Errno> {
     let f = core::mem::transmute::<
-        *mut (),
+        *mut void,
         extern "fastcall" fn(usize, usize, usize, usize, usize, usize) -> usize,
     >(SYSCALL5.load(Ordering::SeqCst));
     Errno::from_ret(f(arg1, arg2, arg0, arg3, arg4, sysno as usize))
@@ -166,7 +168,7 @@ pub unsafe fn syscall6(
     arg5: usize,
 ) -> Result<usize, Errno> {
     let f = core::mem::transmute::<
-        *mut (),
+        *mut void,
         extern "fastcall" fn(usize, usize, usize, usize, usize, usize, usize) -> usize,
     >(SYSCALL6.load(Ordering::SeqCst));
     Errno::from_ret(f(arg1, arg2, arg0, arg3, arg4, arg5, sysno as usize))
@@ -179,19 +181,19 @@ pub use {
 };
 
 pub(crate) unsafe fn x86_init(vsyscall: *const ()) {
-    LINUX_SYSCALLS_RS_VSYSCALL.store(vsyscall as *mut (), Ordering::SeqCst);
+    LINUX_SYSCALLS_RS_VSYSCALL.store(vsyscall as *mut void, Ordering::SeqCst);
 
-    SYSCALL0.store(linux_syscalls_rs_vsyscall0 as *mut (), Ordering::SeqCst);
-    SYSCALL1.store(linux_syscalls_rs_vsyscall1 as *mut (), Ordering::SeqCst);
+    SYSCALL0.store(linux_syscalls_rs_vsyscall0 as *mut void, Ordering::SeqCst);
+    SYSCALL1.store(linux_syscalls_rs_vsyscall1 as *mut void, Ordering::SeqCst);
     SYSCALL1_NORETURN.store(
-        linux_syscalls_rs_vsyscall1_noreturn as *mut (),
+        linux_syscalls_rs_vsyscall1_noreturn as *mut void,
         Ordering::SeqCst,
     );
-    SYSCALL2.store(linux_syscalls_rs_vsyscall2 as *mut (), Ordering::SeqCst);
-    SYSCALL3.store(linux_syscalls_rs_vsyscall3 as *mut (), Ordering::SeqCst);
-    SYSCALL4.store(linux_syscalls_rs_vsyscall4 as *mut (), Ordering::SeqCst);
-    SYSCALL5.store(linux_syscalls_rs_vsyscall5 as *mut (), Ordering::SeqCst);
-    SYSCALL6.store(linux_syscalls_rs_vsyscall6 as *mut (), Ordering::SeqCst);
+    SYSCALL2.store(linux_syscalls_rs_vsyscall2 as *mut void, Ordering::SeqCst);
+    SYSCALL3.store(linux_syscalls_rs_vsyscall3 as *mut void, Ordering::SeqCst);
+    SYSCALL4.store(linux_syscalls_rs_vsyscall4 as *mut void, Ordering::SeqCst);
+    SYSCALL5.store(linux_syscalls_rs_vsyscall5 as *mut void, Ordering::SeqCst);
+    SYSCALL6.store(linux_syscalls_rs_vsyscall6 as *mut void, Ordering::SeqCst);
 }
 
 #[inline(always)]

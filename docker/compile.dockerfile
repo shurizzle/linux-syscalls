@@ -3,11 +3,9 @@ ARG ARCH
 ENV ARCH="$ARCH"
 
 ADD /scripts/install.sh /install.sh
-ADD /scripts/compile.sh /compile.sh
 ADD /docker/entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /install.sh && \
-  chmod +x /compile.sh && \
   env ENVFILE=/env.sh /install.sh $ARCH && \
   rm -f /install.sh && \
   mkdir -p /project && \
