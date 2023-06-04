@@ -224,6 +224,7 @@ if ! which rustup 2>/dev/null >/dev/null; then
 	rm -f rustup-init
 fi
 rustup toolchain install nightly
+rustup component add rust-src --toolchain nightly
 
 "setup_${ARCH}"
 

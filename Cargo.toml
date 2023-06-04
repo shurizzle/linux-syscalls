@@ -18,4 +18,4 @@ cc = "1.0.79"
 [dependencies]
 linux-sysno = "0.2.2"
 linux-errnos = { version = "0.1.1", default-features = false }
-linux-raw-vdso = { git = "https://github.com/shurizzle/linux-raw-vdso" }
+linux-raw-vdso = "0.1.0"
