@@ -1,4 +1,4 @@
-use std::{fmt, io::Write};
+use std::{fmt, io::Write, process::Stdio};
 
 #[allow(clippy::needless_return)]
 fn main() {
@@ -52,19 +52,19 @@ fn main() {
 }
 
 fn main_x86_64() {
-    if needs_outline_asm("ud2", true) {
+    if needs_outline_asm() {
         build_trampoline("x86_64")
     }
 }
 
 fn main_x86() {
-    if needs_outline_asm("ud2", true) {
+    if needs_outline_asm() {
         build_trampoline("x86")
     }
 }
 
 fn main_aarch64() {
-    if needs_outline_asm("udf #16", true) {
+    if needs_outline_asm() {
         build_trampoline("aarch64")
     }
 }
@@ -73,55 +73,73 @@ fn main_arm() {
     if has_thumb_mode() {
         use_feature("thumb_mode");
     }
-    if needs_outline_asm("udf #16", true) {
+    if needs_outline_asm() {
         build_trampoline("arm")
     }
 }
 
 fn main_riscv() {
-    if needs_outline_asm("unimpl", true) {
+    if needs_outline_asm() {
         build_trampoline("riscv")
     }
 }
 
 fn main_powerpc() {
-    if needs_outline_asm("trap", true) {
+    if needs_outline_asm() {
         build_trampoline("powerpc")
     }
 }
 
 fn main_powerpc64() {
-    if needs_outline_asm("trap", true) {
+    if needs_outline_asm() {
         build_trampoline("powerpc64")
     }
 }
 
 fn main_mips() {
-    if needs_outline_asm("teq $zero, $zero", true) {
+    if needs_outline_asm() {
         build_trampoline("mips")
     }
 }
 
 fn main_mips64() {
-    if needs_outline_asm("teq $0, $0", true) {
+    if needs_outline_asm() {
         build_trampoline("mips64")
     }
 }
 
 fn main_s390x() {
-    if needs_outline_asm("trap2", true) {
+    if needs_outline_asm() {
         build_trampoline("s390x")
     }
 }
 
 fn main_loongarch64() {
-    if needs_outline_asm("break 1", true) {
+    if needs_outline_asm() {
         build_trampoline("loongarch64")
     }
 }
 
 fn has_thumb_mode() -> bool {
-    !can_compile("#![feature(asm_experimental_arch)]\nextern crate core;\npub unsafe fn f() { ::core::arch::asm!(\"udf #16\", in(\"r7\") 0); }", true)
+    let mut child = cc::Build::new()
+        .get_compiler()
+        .to_command()
+        .arg("-O0")
+        .arg("-c")
+        .arg("-xc")
+        .arg("-o/dev/null")
+        .arg("-")
+        .stdin(Stdio::piped())
+        .stderr(Stdio::null())
+        .stdout(Stdio::null())
+        .spawn()
+        .unwrap();
+    {
+        let mut stdin = child.stdin.take().unwrap();
+        stdin.write_all("void f() { register long r7 __asm__(\"r7\") = 0; __asm__ __volatile__ (\"udf #16\" : : \"r\"(r7) : \"memory\"); }".as_bytes()).unwrap();
+    }
+
+    !child.wait().unwrap().success()
 }
 
 fn build_trampoline(arch: &str) {
@@ -133,114 +151,35 @@ fn build_trampoline(arch: &str) {
         .compile("liblinux_syscalls_rs.a");
 }
 
-fn needs_outline_asm<T: fmt::Display>(instruction: T, metadata_only: bool) -> bool {
+fn needs_outline_asm() -> bool {
+    const STABLE_59: [&str; 5] = ["x86", "arm", "x86_64", "aarch64", "riscv64"];
+
     if std::env::var("CARGO_CFG_OUTLINE_SYSCALLS").is_ok() {
         use_feature("outline_syscalls");
         true
     } else {
-        match test_asm(instruction, metadata_only) {
-            ASM::Stable => false,
-            ASM::Nightly => {
-                use_feature("asm_experimental_arch");
-                false
-            }
-            ASM::Outline => {
-                if std::env::var("CARGO_CFG_FORCE_INLINE_SYSCALLS").is_err() {
-                    use_feature("outline_syscalls");
-                }
-                true
-            }
+        let arch = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
+        let version = rustc_version::version().unwrap();
+        assert_eq!(version.major, 1);
+
+        if version.minor >= 59 && STABLE_59.contains(&arch.as_str()) {
+            return false;
         }
-    }
-}
 
-#[allow(clippy::upper_case_acronyms)]
-#[derive(Debug)]
-enum ASM {
-    Stable,
-    Nightly,
-    Outline,
-}
+        let version_meta = rustc_version::version_meta().unwrap();
 
-fn test_asm<T: fmt::Display>(instruction: T, metadata_only: bool) -> ASM {
-    let code = format!(
-        "#![feature(asm_experimental_arch)]\nextern crate core;\npub unsafe fn f() {{ ::core::arch::asm!(\"{}\"); }}",
-        instruction
-    );
-
-    if can_compile(&code[35..], metadata_only) {
-        ASM::Stable
-    } else if can_compile(code, metadata_only) {
-        ASM::Nightly
-    } else {
-        ASM::Outline
+        if version_meta.channel == rustc_version::Channel::Nightly {
+            use_feature("asm_experimental_arch");
+            false
+        } else {
+            if std::env::var("CARGO_CFG_FORCE_INLINE_SYSCALLS").is_err() {
+                use_feature("outline_syscalls");
+            }
+            true
+        }
     }
 }
 
 fn use_feature<T: fmt::Display>(feat: T) {
     println!("cargo:rustc-cfg={}", feat);
 }
-
-fn can_compile<T: AsRef<str>>(test: T, metadata_only: bool) -> bool {
-    use std::process::Stdio;
-
-    let out_dir = std::env::var("OUT_DIR").unwrap();
-    let rustc = std::env::var("RUSTC").unwrap();
-    let target = std::env::var("TARGET").unwrap();
-
-    // Ditto 'RUSTC_WRAPPER'
-    let wrapper =
-        std::env::var("RUSTC_WRAPPER")
-            .ok()
-            .and_then(|w| if w.is_empty() { None } else { Some(w) });
-
-    let mut cmd = if let Some(wrapper) = wrapper {
-        let mut cmd = std::process::Command::new(wrapper);
-        cmd.arg(rustc);
-        cmd
-    } else {
-        std::process::Command::new(rustc)
-    };
-
-    cmd.arg("--crate-type=rlib")
-        .tap(|cmd| {
-            if metadata_only {
-                cmd.arg("--emit=metadata")
-            } else {
-                cmd
-            }
-        })
-        .arg("--target")
-        .arg(target)
-        .arg("--out-dir")
-        .arg(out_dir);
-
-    // Ditto RUSTFLAGS.
-    if let Ok(rustflags) = std::env::var("CARGO_ENCODED_RUSTFLAGS") {
-        if !rustflags.is_empty() {
-            for arg in rustflags.split('\x1f') {
-                cmd.arg(arg);
-            }
-        }
-    }
-
-    let mut child = cmd
-        .arg("-")
-        .stdin(Stdio::piped())
-        .stderr(Stdio::null())
-        .spawn()
-        .unwrap();
-
-    writeln!(child.stdin.take().unwrap(), "{}", test.as_ref()).unwrap();
-
-    child.wait().unwrap().success()
-}
-
-pub trait Tap: Sized {
-    #[inline(always)]
-    fn tap<F: FnOnce(Self) -> Self>(self, f: F) -> Self {
-        f(self)
-    }
-}
-
-impl<T> Tap for T {}
