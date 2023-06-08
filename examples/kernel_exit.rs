@@ -20,6 +20,8 @@ fn print_arch() {
     println!("aarch64");
     #[cfg(target_arch = "riscv64")]
     println!("riscv64");
+    #[cfg(target_arch = "powerpc")]
+    println!("powerpc");
     #[cfg(target_arch = "powerpc64")]
     println!("powerpc64");
     #[cfg(target_arch = "mips")]

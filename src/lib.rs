@@ -106,6 +106,14 @@ mod arch;
     path = "inline/riscv.rs"
 )]
 #[cfg_attr(
+    all(
+        target_arch = "powerpc",
+        target_endian = "big",
+        target_pointer_width = "32"
+    ),
+    path = "inline/powerpc.rs"
+)]
+#[cfg_attr(
     all(target_arch = "powerpc64", target_pointer_width = "64"),
     path = "inline/powerpc64.rs"
 )]

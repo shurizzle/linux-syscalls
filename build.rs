@@ -36,7 +36,7 @@ fn main() {
         "arm" if pointer_width == "32" && endian == "little" => main_arm(),
         "riscv32" if pointer_width == "32" && endian == "little" => main_riscv(),
         "riscv64" if pointer_width == "64" && endian == "little" => main_riscv(),
-        "powerpc" if pointer_width == "64" && endian == "big" => main_powerpc(),
+        "powerpc" if pointer_width == "32" && endian == "big" => main_powerpc(),
         "powerpc64" if pointer_width == "64" => main_powerpc64(),
         "mips" if pointer_width == "32" => main_mips(),
         "mips64" if pointer_width == "64" => main_mips64(),

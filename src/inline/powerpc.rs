@@ -351,14 +351,5 @@ pub unsafe fn syscall6_readonly(
     Errno::from_ret(ret)
 }
 
-pub(crate) unsafe fn init() {
-    if crate::env::aux::get::<crate::env::aux::HardwareCapabilities2>().map_or(false, |flags| {
-        flags.contains(crate::env::aux::Features2::SCV)
-    }) {
-        HAS_SCV.store(true, Ordering::SeqCst);
-    }
-}
-
-pub fn has_scv() -> bool {
-    unsafe { HAS_SCV.load(Ordering::SeqCst) }
-}
+#[inline(always)]
+pub(crate) unsafe fn init() {}
