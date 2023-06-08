@@ -23,42 +23,68 @@ expected() {
 }
 
 cargo_build() {
-	cargo +"$1" build --target "$2" --example kernel_exit --release
+	cross +"$1" build --target "$2" --example kernel_exit --release
+}
+
+cargo_build_build_std() {
+	cross +"$1" -Z build-std build --target "$2" --example kernel_exit --release
 }
 
 cargo_run() {
-	cargo +"$1" run --target "$2" --example kernel_exit --release
+	cross +"$1" run --target "$2" --example kernel_exit --release
+}
+
+cargo_run_build_std() {
+	cross +"$1" -Z build-std run --target "$2" --example kernel_exit --release
 }
 
 cargo_test() {
-	local expected target
+	local expected
 	expected="$(expected "$3")"
-	target="target/$2"
 
+	rm -rf Cargo.lock target
 	cargo_build "$@"
 	set +e
 	cargo_run "$@"
 	echo $?
 	set -e
 	[ "$(output_and_exit_code cargo_run "$@")" = "$expected" ]
-	rm -r "$target"
+}
+
+cargo_test_build_std() {
+	local expected
+	expected="$(expected "$3")"
+
+	rm -rf Cargo.lock target
+	cargo_build_build_std "$@"
+	set +e
+	cargo_run_build_std "$@"
+	echo $?
+	set -e
+	[ "$(output_and_exit_code cargo_run "$@")" = "$expected" ]
 }
 
 test_nightly() {
-	rm -rf "target/$1"
+	rm -rf Cargo.lock target
 	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test nightly "$@"
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test nightly "$@"
 }
 
+test_nightly_build_std() {
+	rm -rf Cargo.lock target
+	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test_build_std nightly "$@"
+	RUSTFLAGS="--cfg outline_syscalls" cargo_test_build_std nightly "$@"
+}
+
 test_stable() {
-	rm -rf "target/$1"
+	rm -rf Cargo.lock target
 	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test 1.59.0 "$@"
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test "${3:-1.40.0}" "$@"
 	test_nightly "$@"
 }
 
 test_unstable() {
-	rm -rf "target/$1"
+	rm -rf Cargo.lock target
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test 1.59.0 "$@"
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test "${3:-1.40.0}" "$@"
 	test_nightly "$@"
@@ -67,7 +93,7 @@ test_unstable() {
 test_x86_64() {
 	local libc triple
 
-	for libc in gnu; do
+	for libc in gnu musl; do
 		triple="x86_64-unknown-linux-${libc}"
 		test_stable "$triple" x86_64
 	done
@@ -77,7 +103,7 @@ test_x86() {
 	local arch libc triple
 
 	for arch in i686 i586; do
-		for libc in gnu; do
+		for libc in gnu musl; do
 			triple="${arch}-unknown-linux-${libc}"
 			test_stable "$triple" x86
 		done
@@ -88,34 +114,29 @@ test_arm() {
 	local arch libc triple
 
 	for arch in arm armv5te armv7; do
-		for libc in gnu; do
+		for libc in gnu musl; do
 			triple="${arch}-unknown-linux-${libc}eabi"
 			test_stable "$triple" arm
 		done
 	done
 
-	for arch in arm armv7 thumbv7neon; do
-		for libc in gnu; do
+	for arch in arm armv7; do
+		for libc in gnu musl; do
 			triple="${arch}-unknown-linux-${libc}eabihf"
 			test_stable "$triple" arm
 		done
 	done
+
+	test_stable thumbv7neon-unknown-linux-gnueabihf arm
 }
 
 test_aarch64() {
-	local libc triple
-	for libc in gnu; do
-		triple="aarch64-unknown-linux-${libc}"
-		test_stable "$triple" aarch64
-	done
+	test_stable aarch64-unknown-linux-gnu aarch64
+	test_stable aarch64-unknown-linux-musl aarch64
 }
 
 test_riscv64() {
-	local libc triple
-	for libc in gnu; do
-		triple="riscv64gc-unknown-linux-${libc}"
-		test_stable "$triple" riscv64 1.42.0
-	done
+	test_stable riscv64gc-unknown-linux-gnu riscv64 1.42.0
 }
 
 test_loongarch64() {
@@ -124,7 +145,7 @@ test_loongarch64() {
 
 test_powerpc() {
 	local libc
-	for libc in gnu; do
+	for libc in gnu musl; do
 		test_unstable "powerpc-unknown-linux-gnu" powerpc
 	done
 }
@@ -132,7 +153,7 @@ test_powerpc() {
 test_powerpc64() {
 	local arch libc
 	for arch in powerpc64 powerpc64le; do
-		for libc in gnu; do
+		for libc in gnu musl; do
 			test_unstable "${arch}-unknown-linux-gnu" powerpc64
 		done
 	done
@@ -141,7 +162,7 @@ test_powerpc64() {
 test_mips() {
 	local arch libc
 	for arch in mips mipsel; do
-		for libc in gnu; do
+		for libc in gnu musl; do
 			test_unstable "${arch}-unknown-linux-gnu" mips
 		done
 	done
@@ -150,7 +171,7 @@ test_mips() {
 test_mips64() {
 	local arch libc
 	for arch in mips64 mips64el; do
-		for libc in gnu; do
+		for libc in gnu musl; do
 			test_unstable "${arch}-unknown-linux-gnuabi64" mips64
 		done
 	done
@@ -158,11 +179,19 @@ test_mips64() {
 
 test_s390x() {
 	local libc
-	for libc in gnu; do
+	for libc in gnu musl; do
 		test_unstable "s390x-unknown-linux-gnu" s390x
 	done
 }
 
 # TODO: riscv32
 
-test_"$1"
+if [ $# -eq 0 ]; then
+	set -- arm loongarch64 x86_64 x86 aarch64 riscv64 powerpc powerpc64 mips \
+		mips64 s390x
+fi
+
+while [ $# -ne 0 ]; do
+	"test_$1"
+	shift
+done

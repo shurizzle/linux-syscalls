@@ -1,0 +1,88 @@
+[target.x86_64-unknown-linux-gnu]
+image = "linux-syscalls/x86_64"
+[target.x86_64-unknown-linux-musl]
+image = "linux-syscalls/x86_64"
+
+[target.loongarch64-unknown-linux-gnu]
+image = "linux-syscalls/loongarch64"
+
+[target.i686-unknown-linux-gnu]
+image = "linux-syscalls/x86"
+[target.i686-unknown-linux-musl]
+image = "linux-syscalls/x86"
+[target.i586-unknown-linux-gnu]
+image = "linux-syscalls/x86"
+[target.i586-unknown-linux-musl]
+image = "linux-syscalls/x86"
+
+[target.aarch64-unknown-linux-gnu]
+image = "linux-syscalls/aarch64"
+[target.aarch64-unknown-linux-musl]
+image = "linux-syscalls/aarch64"
+
+[target.riscv64gc-unknown-linux-gnu]
+image = "linux-syscalls/riscv64"
+[target.riscv64gc-unknown-linux-musl]
+image = "linux-syscalls/riscv64"
+
+[target.arm-unknown-linux-gnueabi]
+image = "linux-syscalls/arm"
+[target.armv5te-unknown-linux-gnueabi]
+image = "linux-syscalls/arm"
+[target.armv7-unknown-linux-gnueabi]
+image = "linux-syscalls/arm"
+[target.arm-unknown-linux-gnueabihf]
+image = "linux-syscalls/arm"
+[target.armv7-unknown-linux-gnueabihf]
+image = "linux-syscalls/arm"
+[target.thumbv7neon-unknown-linux-gnueabihf]
+image = "linux-syscalls/arm"
+[target.arm-unknown-linux-musleabi]
+image = "linux-syscalls/arm"
+[target.armv5te-unknown-linux-musleabi]
+image = "linux-syscalls/arm"
+[target.armv7-unknown-linux-musleabi]
+image = "linux-syscalls/arm"
+[target.arm-unknown-linux-musleabihf]
+image = "linux-syscalls/arm"
+[target.armv7-unknown-linux-musleabihf]
+image = "linux-syscalls/arm"
+[target.thumbv7neon-unknown-linux-musleabihf]
+image = "linux-syscalls/arm"
+
+[target.powerpc64-unknown-linux-gnu]
+image = "linux-syscalls/powerpc64"
+[target.powerpc64-unknown-linux-musl]
+image = "linux-syscalls/powerpc64"
+[target.powerpc64le-unknown-linux-gnu]
+image = "linux-syscalls/powerpc64"
+[target.powerpc64le-unknown-linux-musl]
+image = "linux-syscalls/powerpc64"
+
+[target.powerpc-unknown-linux-gnu]
+image = "linux-syscalls/powerpc"
+[target.powerpc-unknown-linux-musl]
+image = "linux-syscalls/powerpc"
+
+[target.mips-unknown-linux-gnu]
+image = "linux-syscalls/mips"
+[target.mipsel-unknown-linux-gnu]
+image = "linux-syscalls/mips"
+[target.mips-unknown-linux-musl]
+image = "linux-syscalls/mips"
+[target.mipsel-unknown-linux-musl]
+image = "linux-syscalls/mips"
+
+[target.mips64-unknown-linux-gnuabi64]
+image = "linux-syscalls/mips64"
+[target.mips64el-unknown-linux-gnuabi64]
+image = "linux-syscalls/mips64"
+[target.mips64-unknown-linux-muslabi64]
+image = "linux-syscalls/mips64"
+[target.mips64el-unknown-linux-muslabi64]
+image = "linux-syscalls/mips64"
+
+[target.s390x-unknown-linux-gnu]
+image = "linux-syscalls/s390x"
+[target.s390x-unknown-linux-musl]
+image = "linux-syscalls/s390x"

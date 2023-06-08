@@ -16,8 +16,19 @@ while [ $# -ne 0 ]; do
 	ARCH="$1"
 	shift
 
+	(
+		cat "${SCRIPTPATH}/../docker/base.dockerfile"
+		echo
+		"${SCRIPTPATH}/env.sh" "$ARCH" |
+			grep -vP '^\s*($|#)' |
+			sed -e '/^#/d;/^\s*$/d' \
+				-e "s/'/'\\\''/g" \
+				-e "s/=\(.*\)/='\1'/g" \
+				-e 's/^/ENV /'
+	) >"${SCRIPTPATH}/../docker/${ARCH}.dockerfile"
+
 	docker buildx build \
-		-f "$SCRIPTPATH/../docker/compile.dockerfile" \
+		-f "$SCRIPTPATH/../docker/${ARCH}.dockerfile" \
 		-t "linux-syscalls/$ARCH" \
 		--build-arg ARCH="$ARCH" \
 		"$SCRIPTPATH/.."
