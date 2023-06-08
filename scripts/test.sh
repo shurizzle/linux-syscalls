@@ -23,19 +23,11 @@ expected() {
 }
 
 cargo_build() {
-	cross +"$1" build --target "$2" --example kernel_exit --release
-}
-
-cargo_build_build_std() {
-	cross +"$1" -Z build-std build --target "$2" --example kernel_exit --release
+	cross +"$1" -vvv build --target "$2" --example kernel_exit --release
 }
 
 cargo_run() {
 	cross +"$1" run --target "$2" --example kernel_exit --release
-}
-
-cargo_run_build_std() {
-	cross +"$1" -Z build-std run --target "$2" --example kernel_exit --release
 }
 
 cargo_test() {
@@ -51,29 +43,10 @@ cargo_test() {
 	[ "$(output_and_exit_code cargo_run "$@")" = "$expected" ]
 }
 
-cargo_test_build_std() {
-	local expected
-	expected="$(expected "$3")"
-
-	rm -rf Cargo.lock target
-	cargo_build_build_std "$@"
-	set +e
-	cargo_run_build_std "$@"
-	echo $?
-	set -e
-	[ "$(output_and_exit_code cargo_run "$@")" = "$expected" ]
-}
-
 test_nightly() {
 	rm -rf Cargo.lock target
 	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test nightly "$@"
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test nightly "$@"
-}
-
-test_nightly_build_std() {
-	rm -rf Cargo.lock target
-	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test_build_std nightly "$@"
-	RUSTFLAGS="--cfg outline_syscalls" cargo_test_build_std nightly "$@"
 }
 
 test_stable() {
@@ -124,6 +97,7 @@ test_arm() {
 	done
 
 	test_stable thumbv7neon-unknown-linux-gnueabihf arm
+	# test_stable thumbv7neon-unknown-linux-musleabihf arm
 }
 
 test_aarch64() {
@@ -141,11 +115,14 @@ test_loongarch64() {
 
 test_powerpc() {
 	test_unstable powerpc-unknown-linux-gnu powerpc
+	# test_nightly powerpc-unknown-linux-musl powerpc
 }
 
 test_powerpc64() {
-	test_unstable "powerpc64-unknown-linux-gnu" powerpc64
-	test_unstable "powerpc64le-unknown-linux-gnu" powerpc64
+	test_unstable powerpc64-unknown-linux-gnu powerpc64
+	test_unstable powerpc64le-unknown-linux-gnu powerpc64
+	# test_nightly powerpc64-unknown-linux-musl powerpc64
+	# test_nightly powerpc64le-unknown-linux-musl powerpc64
 }
 
 test_mips() {
@@ -167,7 +144,8 @@ test_mips64() {
 }
 
 test_s390x() {
-	test_unstable "s390x-unknown-linux-gnu" s390x
+	test_unstable s390x-unknown-linux-gnu s390x
+	# test_nightly s390x-unknown-linux-musl s390x
 }
 
 # TODO: riscv32
