@@ -1,6 +1,8 @@
-#![cfg(target_os = "linux")]
+#![cfg(any(target_os = "linux", target_os = "none"))]
 #![no_std]
 #![cfg_attr(asm_experimental_arch, feature(asm_experimental_arch))]
+#![cfg_attr(doc, feature(doc_cfg, doc_auto_cfg, doc_cfg_hide))]
+#![cfg_attr(doc, doc(cfg_hide(doc)))]
 
 mod bitflags;
 
@@ -10,9 +12,9 @@ pub use linux_sysno::Sysno;
 pub mod env;
 mod init;
 
-#[cfg(not(feature = "bare"))]
+#[cfg(any(doc, all(target_os = "linux", not(feature = "bare"))))]
 pub use init::init;
-#[cfg(feature = "bare")]
+#[cfg(any(doc, target_os = "none", feature = "bare"))]
 pub use init::{init_from_args, init_from_environ};
 
 #[cfg(outline_syscalls)]

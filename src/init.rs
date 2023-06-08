@@ -31,7 +31,7 @@ unsafe fn aux_from_environ(env: *const *const u8) -> *const () {
     p.add(1) as *mut ()
 }
 
-#[cfg(not(feature = "bare"))]
+#[cfg(any(doc, not(feature = "bare")))]
 unsafe fn aux_ptr() -> *const () {
     extern "C" {
         #[cfg(any(target_env = "gnu", target_env = "musl"))]
@@ -46,18 +46,18 @@ unsafe fn aux_ptr() -> *const () {
     aux_from_environ(env)
 }
 
-#[cfg(not(feature = "bare"))]
+#[cfg(any(doc, not(feature = "bare")))]
 pub fn init() {
     unsafe { inner_init(aux_ptr()) }
 }
 
-#[cfg(feature = "bare")]
+#[cfg(any(doc, feature = "bare"))]
 #[allow(clippy::not_unsafe_ptr_arg_deref)]
 pub unsafe fn init_from_environ(env: *const *const u8) {
     inner_init(aux_from_environ(env))
 }
 
-#[cfg(feature = "bare")]
+#[cfg(any(doc, feature = "bare"))]
 #[allow(clippy::not_unsafe_ptr_arg_deref)]
 pub unsafe fn init_from_args(argc: isize, argv: *const *const u8) {
     inner_init(aux_from_environ(argv.add(argc as usize)))
