@@ -51,14 +51,14 @@ test_nightly() {
 
 test_stable() {
 	rm -rf Cargo.lock target
-	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test 1.59.0 "$@"
+	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test stable "$@"
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test "${3:-1.40.0}" "$@"
 	test_nightly "$@"
 }
 
 test_unstable() {
 	rm -rf Cargo.lock target
-	RUSTFLAGS="--cfg outline_syscalls" cargo_test 1.59.0 "$@"
+	RUSTFLAGS="--cfg outline_syscalls" cargo_test stable "$@"
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test "${3:-1.40.0}" "$@"
 	test_nightly "$@"
 }
