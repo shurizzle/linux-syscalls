@@ -201,7 +201,7 @@ setup_arm() {
 	common_install qemu-user gcc-arm-linux-gnueabi{,hf}
 	install_musl arm-linux-musleabi arm
 	install_musl arm-linux-musleabihf armhf
-	musl_linker arm-linux-musl- 65 >/armv5te-musl.sh
+	musl_linker arm-linux-musleabi- 65 >/armv5te-musl.sh
 	chmod +x /armv5te-musl.sh
 	# rustup toolchain install 1.59.0
 
@@ -339,9 +339,9 @@ setup_mips64() {
 		gcc-mips64el-linux-gnuabi64
 	install_musl mips64-linux-muslabi64 mips64
 	install_musl mips64el-linux-muslabi64 mips64el
-	musl_linker mips64-linux-musl- 65 >/mips64-musl.sh
+	musl_linker mips64-linux-muslabi64- 65 >/mips64-musl.sh
 	chmod +x /mips64-musl.sh
-	musl_linker mips64el-linux-musl- 65 >/mips64el-musl.sh
+	musl_linker mips64el-linux-muslabi64- 65 >/mips64el-musl.sh
 	chmod +x /mips64el-musl.sh
 	# rustup toolchain install 1.59.0
 
