@@ -91,39 +91,35 @@ test_unstable() {
 }
 
 test_x86_64() {
-	local libc triple
+	local libc
 
 	for libc in gnu musl; do
-		triple="x86_64-unknown-linux-${libc}"
-		test_stable "$triple" x86_64
+		test_stable "x86_64-unknown-linux-${libc}" x86_64
 	done
 }
 
 test_x86() {
-	local arch libc triple
+	local arch libc
 
 	for arch in i686 i586; do
 		for libc in gnu musl; do
-			triple="${arch}-unknown-linux-${libc}"
-			test_stable "$triple" x86
+			test_stable "${arch}-unknown-linux-${libc}" x86
 		done
 	done
 }
 
 test_arm() {
-	local arch libc triple
+	local arch libc
 
 	for arch in arm armv5te armv7; do
 		for libc in gnu musl; do
-			triple="${arch}-unknown-linux-${libc}eabi"
-			test_stable "$triple" arm
+			test_stable "${arch}-unknown-linux-${libc}eabi" arm
 		done
 	done
 
 	for arch in arm armv7; do
 		for libc in gnu musl; do
-			triple="${arch}-unknown-linux-${libc}eabihf"
-			test_stable "$triple" arm
+			test_stable "${arch}-unknown-linux-${libc}eabihf" arm
 		done
 	done
 
@@ -140,30 +136,23 @@ test_riscv64() {
 }
 
 test_loongarch64() {
-	test_nightly "loongarch64-unknown-linux-gnu" loongarch64
+	test_nightly loongarch64-unknown-linux-gnu loongarch64
 }
 
 test_powerpc() {
-	local libc
-	for libc in gnu musl; do
-		test_unstable "powerpc-unknown-linux-gnu" powerpc
-	done
+	test_unstable powerpc-unknown-linux-gnu powerpc
 }
 
 test_powerpc64() {
-	local arch libc
-	for arch in powerpc64 powerpc64le; do
-		for libc in gnu musl; do
-			test_unstable "${arch}-unknown-linux-gnu" powerpc64
-		done
-	done
+	test_unstable "powerpc64-unknown-linux-gnu" powerpc64
+	test_unstable "powerpc64le-unknown-linux-gnu" powerpc64
 }
 
 test_mips() {
 	local arch libc
 	for arch in mips mipsel; do
 		for libc in gnu musl; do
-			test_unstable "${arch}-unknown-linux-gnu" mips
+			test_unstable "${arch}-unknown-linux-${libc}" mips
 		done
 	done
 }
@@ -172,16 +161,13 @@ test_mips64() {
 	local arch libc
 	for arch in mips64 mips64el; do
 		for libc in gnu musl; do
-			test_unstable "${arch}-unknown-linux-gnuabi64" mips64
+			test_unstable "${arch}-unknown-linux-${libc}abi64" mips64
 		done
 	done
 }
 
 test_s390x() {
-	local libc
-	for libc in gnu musl; do
-		test_unstable "s390x-unknown-linux-gnu" s390x
-	done
+	test_unstable "s390x-unknown-linux-gnu" s390x
 }
 
 # TODO: riscv32
