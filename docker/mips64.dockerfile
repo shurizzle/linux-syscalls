@@ -3,6 +3,7 @@ ARG ARCH
 ENV ARCH="$ARCH"
 
 ENV PATH="${PATH}:/rust/bin"
+ENV RUST_COMPILER_RT_ROOT=/opt/compiler-rt
 
 ADD /scripts/install.sh /install.sh
 

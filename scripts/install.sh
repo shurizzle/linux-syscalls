@@ -125,6 +125,15 @@ fi
 EOF
 }
 
+compiler_rt_root() {
+	local tempdir
+	tempdir="$(mktemp -d)"
+	git clone --depth=1 'https://github.com/llvm/llvm-project.git' "$tempdir"
+	mkdir -p /opt
+	mv "${tempdir}/compiler-rt" /opt/compiler-rt
+	rm -rf "$tempdir"
+}
+
 set_env() {
 	local triple="$1" \
 		prefix="$2" \
@@ -169,10 +178,13 @@ setup_loongarch64() {
 		ln -s "/opt/loongarch64-unknown-linux-gnu/bin/loongarch64-unknown-linux-gnu-$tool" \
 			"/bin/loongarch64-linux-gnu-$tool"
 	done
+
+	compiler_rt_root
 }
 
 setup_x86_64() {
 	common_install qemu-user musl-tools gcc-x86-64-linux-gnu
+	compiler_rt_root
 	# rustup toolchain install 1.59.0
 
 	# for libc in gnu musl; do
@@ -185,6 +197,7 @@ setup_x86_64() {
 setup_x86() {
 	common_install qemu-user gcc-i686-linux-gnu
 	install_musl i686-linux-musl i686
+	compiler_rt_root
 	# rustup toolchain install 1.59.0
 
 	# for arch in i686 i586; do
@@ -203,6 +216,7 @@ setup_arm() {
 	install_musl arm-linux-musleabihf armhf
 	musl_linker arm-linux-musleabi- 65 >/armv5te-musl.sh
 	chmod +x /armv5te-musl.sh
+	compiler_rt_root
 	# rustup toolchain install 1.59.0
 
 	# for arch in arm armv5te armv7; do
@@ -237,6 +251,7 @@ setup_aarch64() {
 	install_musl aarch64-linux-musl aarch64
 	musl_linker aarch64-linux-musl- 48 >/aarch64-musl.sh
 	chmod +x /aarch64-musl.sh
+	compiler_rt_root
 	# rustup toolchain install 1.59.0
 
 	# for libc in gnu musl; do
@@ -255,6 +270,7 @@ setup_aarch64() {
 setup_riscv64() {
 	common_install qemu-user gcc-riscv64-linux-gnu
 	install_musl riscv64-linux-musl riscv64
+	compiler_rt_root
 	# rustup toolchain install 1.59.0
 
 	# for libc in gnu musl; do
@@ -272,6 +288,7 @@ setup_riscv64() {
 setup_powerpc() {
 	common_install qemu-user gcc-powerpc-linux-gnu
 	install_musl powerpc-linux-musl powerpc
+	compiler_rt_root
 	# rustup toolchain install 1.59.0
 
 	# for libc in gnu musl; do
@@ -291,6 +308,7 @@ setup_powerpc64() {
 		gcc-powerpc64le-linux-gnu
 	install_musl powerpc64-linux-musl powerpc64
 	install_musl powerpc64le-linux-musl powerpc64le
+	compiler_rt_root
 	# rustup toolchain install 1.59.0
 
 	# for libc in gnu musl; do
@@ -318,6 +336,7 @@ setup_mips() {
 	common_install qemu-user gcc-mips-linux-gnu gcc-mipsel-linux-gnu
 	install_musl mips-linux-musl mips
 	install_musl mipsel-linux-musl mipsel
+	compiler_rt_root
 	# rustup toolchain install 1.59.0
 
 	# for arch in mips mipsel; do
@@ -343,6 +362,7 @@ setup_mips64() {
 	chmod +x /mips64-musl.sh
 	musl_linker mips64el-linux-muslabi64- 65 >/mips64el-musl.sh
 	chmod +x /mips64el-musl.sh
+	compiler_rt_root
 	# rustup toolchain install 1.59.0
 
 	# for arch in mips64 mips64el; do
@@ -362,6 +382,7 @@ setup_mips64() {
 setup_s390x() {
 	common_install qemu-user gcc-s390x-linux-gnu
 	install_musl s390x-linux-musl s390x
+	compiler_rt_root
 	# rustup toolchain install 1.59.0
 
 	# for libc in gnu musl; do
