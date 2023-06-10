@@ -59,8 +59,8 @@ pub unsafe fn init_from_environ(env: *const *const u8) {
 
 #[cfg(any(doc, feature = "bare"))]
 #[allow(clippy::not_unsafe_ptr_arg_deref)]
-pub unsafe fn init_from_args(argc: isize, argv: *const *const u8) {
-    inner_init(aux_from_environ(argv.add(argc as usize)))
+pub unsafe fn init_from_args(argc: usize, argv: *const *const u8) {
+    inner_init(aux_from_environ(argv.add(argc)))
 }
 
 unsafe fn inner_init(auxv: *const ()) {
