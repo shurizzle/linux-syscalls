@@ -1,0 +1,16 @@
+[package]
+name = "bare"
+version = "0.1.0"
+edition = "2021"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
+[build-dependencies]
+cc = "1.0.79"
+
+[dependencies]
+linux-syscalls = { path = "..", features = ["bare"] }

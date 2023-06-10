@@ -1,3 +1,6 @@
 /target
 /Cargo.lock
 /qemu_kernel_exit_*
+/bare/target
+/bare/Cargo.lock
+/bare/qemu_kernel_exit_*

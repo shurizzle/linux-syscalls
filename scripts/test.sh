@@ -159,3 +159,8 @@ while [ $# -ne 0 ]; do
 	"test_$1"
 	shift
 done
+
+# ./scripts/docker-run.sh nightly aarch64 /bin/sh -c 'cd bare && cargo -Z build-std=core -Z build-std-features=compiler-builtins-c,panic_immediate_abort build --target aarch64-unknown-linux-gnu --release && exec $CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER /target/aarch64-unknown-linux-gnu/release/bare'; echo $?
+# ./scripts/docker-run.sh nightly x86_64 /bin/sh -c 'cd bare && cargo -Z build-std=core -Z build-std-features=compiler-builtins-c,panic_immediate_abort build --target x86_64-unknown-linux-gnu --release && exec $CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUNNER /target/x86_64-unknown-linux-gnu/release/bare'; echo $?
+# ./scripts/docker-run.sh nightly x86 /bin/sh -c 'cd bare && cargo -Z build-std=core -Z build-std-features=compiler-builtins-c,panic_immediate_abort build --target i686-unknown-linux-gnu --release && exec $CARGO_TARGET_I686_UNKNOWN_LINUX_GNU_RUNNER /target/i686-unknown-linux-gnu/release/bare'; echo $?
+# ./scripts/docker-run.sh nightly arm /bin/sh -c 'cd bare && cargo -Z build-std=core -Z build-std-features=compiler-builtins-c,panic_immediate_abort build -vvv --target arm-unknown-linux-gnueabi --release && exec $CARGO_TARGET_ARM_UNKNOWN_LINUX_GNUEABI_RUNNER /target/arm-unknown-linux-gnueabi/release/bare'; echo $?
