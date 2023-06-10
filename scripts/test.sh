@@ -22,33 +22,44 @@ expected() {
 	echo 69
 }
 
+# cargo_build(toolchain, arch, target)
 cargo_build() {
-	cross +"$1" -vvv build --target "$2" --example kernel_exit --release
+	"${SCRIPTPATH}/docker-run.sh" "$1" "$2" \
+		cargo -vvv build \
+		--target "$3" \
+		--example kernel_exit \
+		--release
 }
 
+# cargo_run(toolchain, arch, target)
 cargo_run() {
-	cross +"$1" run --target "$2" --example kernel_exit --release
+	local runner
+	runner="CARGO_TARGET_$(printf '%s' "$3" | tr 'a-z-' 'A-Z_')_RUNNER"
+
+	"${SCRIPTPATH}/docker-run.sh" "$1" "$2" \
+		/bin/sh -c "exec \$${runner} /target/$3/release/examples/kernel_exit"
 }
 
+# cargo_test(toolchain, target, arch)
 cargo_test() {
 	local expected
 	expected="$(expected "$3")"
 
 	rm -rf Cargo.lock target
-	cargo_build "$@"
-	set +e
-	cargo_run "$@"
-	echo $?
-	set -e
-	[ "$(output_and_exit_code cargo_run "$@")" = "$expected" ]
+	cargo_build "$1" "$3" "$2"
+	local res
+	res="$(output_and_exit_code cargo_run "$1" "$3" "$2")"
+	[ "${res}" = "$expected" ]
 }
 
+# test_nightly(target, arch)
 test_nightly() {
 	rm -rf Cargo.lock target
-	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test nightly "$@"
-	RUSTFLAGS="--cfg outline_syscalls" cargo_test nightly "$@"
+	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test nightly "$1" "$2"
+	RUSTFLAGS="--cfg outline_syscalls" cargo_test nightly "$1" "$2"
 }
 
+# test_stable(target, arch, toolchain?)
 test_stable() {
 	rm -rf Cargo.lock target
 	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test stable "$@"
@@ -56,6 +67,7 @@ test_stable() {
 	test_nightly "$@"
 }
 
+# test_unstable(target, arch, toolchain?)
 test_unstable() {
 	rm -rf Cargo.lock target
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test stable "$@"
@@ -107,6 +119,7 @@ test_aarch64() {
 
 test_riscv64() {
 	test_stable riscv64gc-unknown-linux-gnu riscv64 1.42.0
+	# test_stable riscv64gc-unknown-linux-musl riscv64 1.42.0
 }
 
 test_loongarch64() {

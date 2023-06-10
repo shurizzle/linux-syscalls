@@ -32,7 +32,7 @@
 ```bash
 rustc +nightly --print target-list | \
     grep -P -- '-linux(-|$)' | \
-    grep -vP '^((x86(_64)?|s390x|aarch64|i[56]86|mips|powerpc64|riscv64gc|loongarch64)-unknown-linux-gnu|(arm(v5te|v7)?|thumbv7neon)-unknown-linux-gnueabi(hf)?|mips64-unknown-linux-gnuabi64)$'
+    grep -vP '^((x86_64|i[56]86|aarch64|mips(el)?)-unknown-linux-(gnu|musl)|arm(v5te|v7)?-unknown-linux-(gnu|musl)eabi|arm(v7)?-unknown-linux-(gnu|musl)eabihf|thumbv7neon-unknown-linux-gnueabihf|(riscv64gc|loongarch64|powerpc(64(le)?)?|s390x)-unknown-linux-gnu|mips64(el)?-unknown-linux-(gnu|musl)abi64)$'
 ```
 
 ### MSRV

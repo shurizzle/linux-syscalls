@@ -17,7 +17,7 @@ CRATEPATH="$(realpath "${SCRIPTPATH}/..")"
 mkdir -p "${CRATEPATH}/target"
 
 tty=
-if [ -t 0 ]; then
+if [ -t 0 ] && [ -t 1 ]; then
 	tty=-it
 fi
 
