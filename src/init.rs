@@ -47,6 +47,7 @@ unsafe fn aux_ptr() -> *const () {
 }
 
 #[cfg(any(doc, not(feature = "bare")))]
+#[cfg_attr(docs_rs, doc(cfg(not(feature = "bare"))))]
 pub fn init() {
     unsafe { inner_init(aux_ptr()) }
 }
@@ -57,6 +58,7 @@ pub fn init() {
 /// # Safety
 ///
 /// Dealing with pointers is unsafe by definition.
+#[cfg_attr(docs_rs, doc(cfg(feature = "bare")))]
 #[allow(clippy::not_unsafe_ptr_arg_deref)]
 pub unsafe fn init_from_environ(env: *const *const u8) {
     inner_init(aux_from_environ(env))
@@ -69,6 +71,7 @@ pub unsafe fn init_from_environ(env: *const *const u8) {
 ///
 /// Dealing with pointers is unsafe by definition.
 #[allow(clippy::not_unsafe_ptr_arg_deref)]
+#[cfg_attr(docs_rs, doc(cfg(feature = "bare")))]
 pub unsafe fn init_from_args(argc: usize, argv: *const *const u8) {
     inner_init(aux_from_environ(argv.add(argc)))
 }

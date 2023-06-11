@@ -2,7 +2,7 @@ use crate::{Errno, Sysno};
 
 use core::arch::asm;
 
-#[doc = include_str!("../../docs/syscall0_readonly.md")]
+#[allow(clippy::missing_safety_doc)]
 #[inline]
 pub unsafe fn syscall0(sysno: Sysno) -> Result<usize, Errno> {
     let ret;
@@ -21,7 +21,7 @@ pub unsafe fn syscall0(sysno: Sysno) -> Result<usize, Errno> {
 
 pub use syscall0 as syscall0_readonly;
 
-#[doc = include_str!("../../docs/syscall1.md")]
+#[allow(clippy::missing_safety_doc)]
 #[inline]
 pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
     let ret;
@@ -38,7 +38,7 @@ pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
     Errno::from_ret(ret)
 }
 
-#[doc = include_str!("../../docs/syscall1_readonly.md")]
+#[allow(clippy::missing_safety_doc)]
 #[inline]
 pub unsafe fn syscall1_readonly(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
     let ret;
@@ -55,7 +55,7 @@ pub unsafe fn syscall1_readonly(sysno: Sysno, arg0: usize) -> Result<usize, Errn
     Errno::from_ret(ret)
 }
 
-#[doc = include_str!("../../docs/syscall1_noreturn.md")]
+#[allow(clippy::missing_safety_doc)]
 #[inline]
 pub unsafe fn syscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
     asm!(
@@ -68,7 +68,7 @@ pub unsafe fn syscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
     )
 }
 
-#[doc = include_str!("../../docs/syscall2.md")]
+#[allow(clippy::missing_safety_doc)]
 #[inline]
 pub unsafe fn syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
     let ret;
@@ -86,7 +86,7 @@ pub unsafe fn syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, 
     Errno::from_ret(ret)
 }
 
-#[doc = include_str!("../../docs/syscall2_readonly.md")]
+#[allow(clippy::missing_safety_doc)]
 #[inline]
 pub unsafe fn syscall2_readonly(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
     let ret;
@@ -104,7 +104,7 @@ pub unsafe fn syscall2_readonly(sysno: Sysno, arg0: usize, arg1: usize) -> Resul
     Errno::from_ret(ret)
 }
 
-#[doc = include_str!("../../docs/syscall3.md")]
+#[allow(clippy::missing_safety_doc)]
 #[inline]
 pub unsafe fn syscall3(
     sysno: Sysno,
@@ -128,7 +128,7 @@ pub unsafe fn syscall3(
     Errno::from_ret(ret)
 }
 
-#[doc = include_str!("../../docs/syscall3_readonly.md")]
+#[allow(clippy::missing_safety_doc)]
 #[inline]
 pub unsafe fn syscall3_readonly(
     sysno: Sysno,
@@ -152,7 +152,7 @@ pub unsafe fn syscall3_readonly(
     Errno::from_ret(ret)
 }
 
-#[doc = include_str!("../../docs/syscall4.md")]
+#[allow(clippy::missing_safety_doc)]
 #[inline]
 pub unsafe fn syscall4(
     sysno: Sysno,
@@ -178,7 +178,7 @@ pub unsafe fn syscall4(
     Errno::from_ret(ret)
 }
 
-#[doc = include_str!("../../docs/syscall4_readonly.md")]
+#[allow(clippy::missing_safety_doc)]
 #[inline]
 pub unsafe fn syscall4_readonly(
     sysno: Sysno,
@@ -204,7 +204,7 @@ pub unsafe fn syscall4_readonly(
     Errno::from_ret(ret)
 }
 
-#[doc = include_str!("../../docs/syscall5.md")]
+#[allow(clippy::missing_safety_doc)]
 #[inline]
 pub unsafe fn syscall5(
     sysno: Sysno,
@@ -232,7 +232,7 @@ pub unsafe fn syscall5(
     Errno::from_ret(ret)
 }
 
-#[doc = include_str!("../../docs/syscall5_readonly.md")]
+#[allow(clippy::missing_safety_doc)]
 #[inline]
 pub unsafe fn syscall5_readonly(
     sysno: Sysno,
@@ -260,7 +260,7 @@ pub unsafe fn syscall5_readonly(
     Errno::from_ret(ret)
 }
 
-#[doc = include_str!("../../docs/syscall6.md")]
+#[allow(clippy::missing_safety_doc)]
 #[inline]
 pub unsafe fn syscall6(
     sysno: Sysno,
@@ -290,7 +290,7 @@ pub unsafe fn syscall6(
     Errno::from_ret(ret)
 }
 
-#[doc = include_str!("../../docs/syscall6_readonly.md")]
+#[allow(clippy::missing_safety_doc)]
 #[inline]
 pub unsafe fn syscall6_readonly(
     sysno: Sysno,

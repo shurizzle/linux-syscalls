@@ -3,7 +3,7 @@ exclude = ["bare"]
 
 [package]
 name = "linux-syscalls"
-version = "0.1.0"
+version = "0.0.0"
 edition = "2018"
 
 [package.metadata]
@@ -24,10 +24,9 @@ targets = [
   "i686-unknown-linux-gnu",
   "loongarch64-unknown-linux-gnu",
   "x86_64-unknown-linux-gnux32",
-  "armeb-unknown-linux-gnueabi",
 ]
-rustc-args = ["--cfg", "docs_rs"]
-cargo-args = ["-Z", "build-std=core", "--no-deps"]
+rustdoc-args = ["--cfg", "docs_rs"]
+cargo-args = ["--no-deps"]
 
 [features]
 default = []
@@ -41,3 +40,4 @@ cc = "1.0.79"
 linux-sysno = "0.2.2"
 linux-errnos = { version = "0.1.1", default-features = false }
 linux-raw-vdso = "0.1.0"
+cfg-if = "1.0.0"

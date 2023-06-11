@@ -1,16 +1,17 @@
-#![cfg(any(target_os = "linux", target_os = "none"))]
 #![no_std]
+#![cfg(target_os = "linux")]
 #![cfg_attr(asm_experimental_arch, feature(asm_experimental_arch))]
-#![cfg_attr(doc, feature(doc_cfg, doc_auto_cfg, doc_cfg_hide))]
-#![cfg_attr(doc, doc(cfg_hide(doc)))]
+#![cfg_attr(docs_rs, feature(doc_cfg))]
 
 mod bitflags;
 
+use cfg_if::cfg_if;
 pub use linux_errnos::Errno;
 pub use linux_sysno::Sysno;
 
 pub mod env;
 mod init;
+mod macros;
 
 #[cfg(any(doc, all(target_os = "linux", not(feature = "bare"))))]
 pub use init::init;
@@ -148,292 +149,192 @@ mod arch;
 #[cfg(all(target_arch = "powerpc64", target_pointer_width = "64"))]
 pub use arch::has_scv;
 
-#[cfg(any(
-    all(target_arch = "x86_64", target_endian = "little"),
-    all(target_arch = "aarch64", target_pointer_width = "64"),
-    all(target_arch = "arm", target_pointer_width = "32"),
-    all(
-        target_arch = "riscv64",
-        target_endian = "little",
-        target_pointer_width = "64"
-    ),
-    all(
-        target_arch = "riscv32",
-        target_endian = "little",
-        target_pointer_width = "32"
-    ),
-    all(target_arch = "mips", target_pointer_width = "32"),
-    all(target_arch = "mips64", target_pointer_width = "64"),
-    all(
-        target_arch = "s390x",
-        target_endian = "big",
-        target_pointer_width = "64"
-    ),
-    all(
-        target_arch = "loongarch64",
-        target_endian = "little",
-        target_pointer_width = "64"
-    ),
-    all(
-        target_arch = "x86",
-        target_endian = "little",
-        target_pointer_width = "32"
-    ),
-    all(
-        target_arch = "powerpc",
-        target_endian = "big",
-        target_pointer_width = "32"
-    ),
-    all(target_arch = "powerpc64", target_pointer_width = "64"),
-))]
-pub use arch::{
-    syscall0, syscall0_readonly, syscall1, syscall1_noreturn, syscall1_readonly, syscall2,
-    syscall2_readonly, syscall3, syscall3_readonly, syscall4, syscall4_readonly, syscall5,
-    syscall5_readonly, syscall6, syscall6_readonly,
-};
-#[cfg(all(target_arch = "mips", target_pointer_width = "32"))]
-pub use arch::{syscall7, syscall7_readonly};
+cfg_if! {
+    if #[cfg(any(
+            all(target_arch = "x86_64", target_endian = "little"),
+            all(target_arch = "aarch64", target_pointer_width = "64"),
+            all(target_arch = "arm", target_pointer_width = "32"),
+            all(
+                target_arch = "riscv64",
+                target_endian = "little",
+                target_pointer_width = "64"
+            ),
+            all(
+                target_arch = "riscv32",
+                target_endian = "little",
+                target_pointer_width = "32"
+            ),
+            all(target_arch = "mips", target_pointer_width = "32"),
+            all(target_arch = "mips64", target_pointer_width = "64"),
+            all(
+                target_arch = "s390x",
+                target_endian = "big",
+                target_pointer_width = "64"
+            ),
+            all(
+                target_arch = "loongarch64",
+                target_endian = "little",
+                target_pointer_width = "64"
+            ),
+            all(
+                target_arch = "x86",
+                target_endian = "little",
+                target_pointer_width = "32"
+            ),
+            all(
+                target_arch = "powerpc",
+                target_endian = "big",
+                target_pointer_width = "32"
+            ),
+            all(target_arch = "powerpc64", target_pointer_width = "64"),
+        ))] {
+        /// Make a raw system call with 0 arguments.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall0;
 
-#[cfg(any(
-    all(target_arch = "x86_64", target_endian = "little"),
-    all(target_arch = "aarch64", target_pointer_width = "64"),
-    all(target_arch = "arm", target_pointer_width = "32"),
-    all(
-        target_arch = "riscv64",
-        target_endian = "little",
-        target_pointer_width = "64"
-    ),
-    all(
-        target_arch = "riscv32",
-        target_endian = "little",
-        target_pointer_width = "32"
-    ),
-    all(target_arch = "mips64", target_pointer_width = "64"),
-    all(
-        target_arch = "s390x",
-        target_endian = "big",
-        target_pointer_width = "64"
-    ),
-    all(
-        target_arch = "loongarch64",
-        target_endian = "little",
-        target_pointer_width = "64"
-    ),
-    all(
-        target_arch = "x86",
-        target_endian = "little",
-        target_pointer_width = "32"
-    ),
-    all(
-        target_arch = "powerpc",
-        target_endian = "big",
-        target_pointer_width = "32"
-    ),
-    all(target_arch = "powerpc64", target_pointer_width = "64"),
-))]
-#[macro_export]
-macro_rules! syscall {
-    ([ro] $sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr, $arg5:expr $(,)?) => {
-        $crate::syscall6_readonly(
-            $sysno,
-            ($arg0) as usize,
-            ($arg1) as usize,
-            ($arg2) as usize,
-            ($arg3) as usize,
-            ($arg4) as usize,
-            ($arg5) as usize,
-        )
-    };
-    ([ro] $sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr $(,)?) => {
-        $crate::syscall5_readonly(
-            $sysno,
-            ($arg0) as usize,
-            ($arg1) as usize,
-            ($arg2) as usize,
-            ($arg3) as usize,
-            ($arg4) as usize,
-        )
-    };
-    ([ro] $sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr $(,)?) => {
-        $crate::syscall4_readonly(
-            $sysno,
-            ($arg0) as usize,
-            ($arg1) as usize,
-            ($arg2) as usize,
-            ($arg3) as usize,
-        )
-    };
-    ([ro] $sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr $(,)?) => {
-        $crate::syscall3_readonly($sysno, ($arg0) as usize, ($arg1) as usize, ($arg2) as usize)
-    };
-    ([ro] $sysno:expr, $arg0:expr, $arg1:expr $(,)?) => {
-        $crate::syscall2_readonly($sysno, ($arg0) as usize, ($arg1) as usize)
-    };
-    ([!] $sysno:expr, $arg0:expr $(,)?) => {
-        $crate::syscall1_noreturn($sysno, ($arg0) as usize)
-    };
-    ([ro] $sysno:expr, $arg0:expr $(,)?) => {
-        $crate::syscall1_readonly($sysno, ($arg0) as usize)
-    };
-    ([ro] $sysno:expr $(,)?) => {
-        $crate::syscall0_readonly($sysno)
-    };
-    ($sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr, $arg5:expr $(,)?) => {
-        $crate::syscall6(
-            $sysno,
-            ($arg0) as usize,
-            ($arg1) as usize,
-            ($arg2) as usize,
-            ($arg3) as usize,
-            ($arg4) as usize,
-            ($arg5) as usize,
-        )
-    };
-    ($sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr $(,)?) => {
-        $crate::syscall5(
-            $sysno,
-            ($arg0) as usize,
-            ($arg1) as usize,
-            ($arg2) as usize,
-            ($arg3) as usize,
-            ($arg4) as usize,
-        )
-    };
-    ($sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr $(,)?) => {
-        $crate::syscall4(
-            $sysno,
-            ($arg0) as usize,
-            ($arg1) as usize,
-            ($arg2) as usize,
-            ($arg3) as usize,
-        )
-    };
-    ($sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr $(,)?) => {
-        $crate::syscall3($sysno, ($arg0) as usize, ($arg1) as usize, ($arg2) as usize)
-    };
-    ($sysno:expr, $arg0:expr, $arg1:expr $(,)?) => {
-        $crate::syscall2($sysno, ($arg0) as usize, ($arg1) as usize)
-    };
-    ($sysno:expr, $arg0:expr $(,)?) => {
-        $crate::syscall1($sysno, ($arg0) as usize)
-    };
-    ($sysno:expr $(,)?) => {
-        $crate::syscall0($sysno)
-    };
+        /// Make a raw system call with 1 argument.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall1;
+
+        /// Make a raw system call with 2 arguments.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall2;
+
+        /// Make a raw system call with 3 arguments.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall3;
+
+        /// Make a raw system call with 4 arguments.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall4;
+
+        /// Make a raw system call with 5 arguments.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall5;
+
+        /// Make a raw system call with 6 arguments.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall6;
+
+        /// Make a raw system call with 0 arguments.
+        /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall0_readonly;
+
+        /// Make a raw system call with 1 argument.
+        /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall1_readonly;
+
+        /// Make a raw system call with 7 arguments.
+        /// It's assured that it will not return.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall1_noreturn;
+
+        /// Make a raw system call with 2 arguments.
+        /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall2_readonly;
+
+        /// Make a raw system call with 3 arguments.
+        /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall3_readonly;
+
+        /// Make a raw system call with 4 arguments.
+        /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall4_readonly;
+
+        /// Make a raw system call with 5 arguments.
+        /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall5_readonly;
+
+        /// Make a raw system call with 6 arguments.
+        /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall6_readonly;
+    }
 }
 
-#[cfg(all(target_arch = "mips", target_pointer_width = "32"))]
-#[macro_export]
-macro_rules! syscall {
-    ([ro] $sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr, $arg5:expr, $arg6:expr $(,)?) => {
-        $crate::syscall7_readonly(
-            $sysno,
-            ($arg0) as usize,
-            ($arg1) as usize,
-            ($arg2) as usize,
-            ($arg3) as usize,
-            ($arg4) as usize,
-            ($arg5) as usize,
-            ($arg6) as usize,
-        )
-    };
-    ([ro] $sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr, $arg5:expr $(,)?) => {
-        $crate::syscall6_readonly(
-            $sysno,
-            ($arg0) as usize,
-            ($arg1) as usize,
-            ($arg2) as usize,
-            ($arg3) as usize,
-            ($arg4) as usize,
-            ($arg5) as usize,
-        )
-    };
-    ([ro] $sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr $(,)?) => {
-        $crate::syscall5_readonly(
-            $sysno,
-            ($arg0) as usize,
-            ($arg1) as usize,
-            ($arg2) as usize,
-            ($arg3) as usize,
-            ($arg4) as usize,
-        )
-    };
-    ([ro] $sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr $(,)?) => {
-        $crate::syscall4_readonly(
-            $sysno,
-            ($arg0) as usize,
-            ($arg1) as usize,
-            ($arg2) as usize,
-            ($arg3) as usize,
-        )
-    };
-    ([ro] $sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr $(,)?) => {
-        $crate::syscall3_readonly($sysno, ($arg0) as usize, ($arg1) as usize, ($arg2) as usize)
-    };
-    ([ro] $sysno:expr, $arg0:expr, $arg1:expr $(,)?) => {
-        $crate::syscall2_readonly($sysno, ($arg0) as usize, ($arg1) as usize)
-    };
-    ([!] $sysno:expr, $arg0:expr $(,)?) => {
-        $crate::syscall1_noreturn($sysno, ($arg0) as usize)
-    };
-    ([ro] $sysno:expr, $arg0:expr $(,)?) => {
-        $crate::syscall1_readonly($sysno, ($arg0) as usize)
-    };
-    ([ro] $sysno:expr $(,)?) => {
-        $crate::syscall0_readonly($sysno)
-    };
-    ($sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr, $arg5:expr, $arg6:expr $(,)?) => {
-        $crate::syscall7(
-            $sysno,
-            ($arg0) as usize,
-            ($arg1) as usize,
-            ($arg2) as usize,
-            ($arg3) as usize,
-            ($arg4) as usize,
-            ($arg5) as usize,
-            ($arg6) as usize,
-        )
-    };
-    ($sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr, $arg5:expr $(,)?) => {
-        $crate::syscall6(
-            $sysno,
-            ($arg0) as usize,
-            ($arg1) as usize,
-            ($arg2) as usize,
-            ($arg3) as usize,
-            ($arg4) as usize,
-            ($arg5) as usize,
-        )
-    };
-    ($sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr $(,)?) => {
-        $crate::syscall5(
-            $sysno,
-            ($arg0) as usize,
-            ($arg1) as usize,
-            ($arg2) as usize,
-            ($arg3) as usize,
-            ($arg4) as usize,
-        )
-    };
-    ($sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr $(,)?) => {
-        $crate::syscall4(
-            $sysno,
-            ($arg0) as usize,
-            ($arg1) as usize,
-            ($arg2) as usize,
-            ($arg3) as usize,
-        )
-    };
-    ($sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr $(,)?) => {
-        $crate::syscall3($sysno, ($arg0) as usize, ($arg1) as usize, ($arg2) as usize)
-    };
-    ($sysno:expr, $arg0:expr, $arg1:expr $(,)?) => {
-        $crate::syscall2($sysno, ($arg0) as usize, ($arg1) as usize)
-    };
-    ($sysno:expr, $arg0:expr $(,)?) => {
-        $crate::syscall1($sysno, ($arg0) as usize)
-    };
-    ($sysno:expr $(,)?) => {
-        $crate::syscall0($sysno)
-    };
+cfg_if! {
+    if #[cfg(all(target_arch = "mips", target_pointer_width = "32"))] {
+        /// Make a raw system call with 7 arguments.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall7;
+
+        /// Make a raw system call with 7 arguments.
+        /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+        ///
+        /// # Safety
+        ///
+        /// A system call is unsafe by definition.
+        /// It's the caller's responsibility to ensure safety.
+        pub use arch::syscall7_readonly;
+    }
 }
