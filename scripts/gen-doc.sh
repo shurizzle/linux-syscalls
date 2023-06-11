@@ -17,11 +17,9 @@ for i in 0 1 2 3 4 5 6 7; do
 		arguments="$i arguments"
 	fi
 
-	if [ "$i" -ne 0 ]; then
-		sed -e "s/__ARGUMENTS__/$arguments/g" \
-			-e 's/__ADDENDUM__//g' \
-			docs/syscall__TEMPLATE__.md >"docs/syscall${i}.md"
-	fi
+	sed -e "s/__ARGUMENTS__/$arguments/g" \
+		-e 's/__ADDENDUM__//g' \
+		docs/syscall__TEMPLATE__.md >"docs/syscall${i}.md"
 
 	sed -e "s/__ARGUMENTS__/$arguments/g" \
 		-e "s/__ADDENDUM__/\\nLike the non \`_readonly\` version but you declare that syscall does not mutate any memory./g" \

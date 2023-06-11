@@ -9,7 +9,7 @@ const FUTEX_PRIVATE_FLAG: i32 = 128;
 const INITIAL: u32 = 0x0;
 const RUNNING: u32 = 0x1;
 const COMPLETE: u32 = 0x2;
-const PANICKED: u32 = 0xffffffff;
+const PANICKED: u32 = 0xffff_ffff;
 
 static mut LOCK: AtomicU32 = AtomicU32::new(INITIAL);
 

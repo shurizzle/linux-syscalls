@@ -29,7 +29,9 @@ while [ $# -ne 0 ]; do
 
 	docker buildx build \
 		-f "$SCRIPTPATH/../docker/${ARCH}.dockerfile" \
-		-t "linux-syscalls/$ARCH" \
+		-t "shurizzle/toolchain-gnu-musl-cargoenv-${ARCH}:latest" \
 		--build-arg ARCH="$ARCH" \
 		"$SCRIPTPATH/.."
+
+	docker push "shurizzle/toolchain-gnu-musl-cargoenv-${ARCH}:latest"
 done

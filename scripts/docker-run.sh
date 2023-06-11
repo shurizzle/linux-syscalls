@@ -14,6 +14,8 @@ SCRIPTPATH="$(
 )"
 CRATEPATH="$(realpath "${SCRIPTPATH}/..")"
 
+docker pull "shurizzle/toolchain-gnu-musl-cargoenv-${ARCH}:latest" >&2
+
 mkdir -p "${CRATEPATH}/target"
 
 tty=
@@ -34,4 +36,4 @@ docker run --rm $tty \
 	-v "$(rustc "+${TOOLCHAIN}" --print sysroot)":/rust:z,ro \
 	-v "${CRATEPATH}/target:/target:z" \
 	-w /project \
-	"linux-syscalls/${ARCH}" "$@"
+	"shurizzle/toolchain-gnu-musl-cargoenv-${ARCH}:latest" "$@"
