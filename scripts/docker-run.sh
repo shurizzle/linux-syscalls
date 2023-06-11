@@ -14,8 +14,6 @@ SCRIPTPATH="$(
 )"
 CRATEPATH="$(realpath "${SCRIPTPATH}/..")"
 
-docker pull "shurizzle/toolchain-gnu-musl-cargoenv-${ARCH}:latest" >&2
-
 mkdir -p "${CRATEPATH}/target"
 
 tty=

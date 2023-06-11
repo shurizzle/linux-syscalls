@@ -40,6 +40,21 @@ cargo_run() {
 		/bin/sh -c "exec \$${runner} /target/$3/release/examples/kernel_exit"
 }
 
+# cargo_clippy(toolchain, arch, target)
+cargo_clippy() {
+	"${SCRIPTPATH}/docker-run.sh" "$1" "$2" \
+		cargo -vvv clippy \
+		--no-default-features \
+		--target "$3" \
+		-- -D warnings
+
+	"${SCRIPTPATH}/docker-run.sh" "$1" "$2" \
+		cargo -vvv clippy \
+		--features=bare \
+		--target "$3" \
+		-- -D warnings
+}
+
 # cargo_test(toolchain, target, arch)
 cargo_test() {
 	local expected
@@ -54,14 +69,14 @@ cargo_test() {
 
 # test_nightly(target, arch)
 test_nightly() {
-	rm -rf Cargo.lock target
-	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test nightly "$1" "$2"
-	RUSTFLAGS="--cfg outline_syscalls" cargo_test nightly "$1" "$2"
+	cargo_clippy nightly "$2" "$1"
+	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test nightly "$@"
+	RUSTFLAGS="--cfg outline_syscalls" cargo_test nightly "$@"
 }
 
 # test_stable(target, arch, toolchain?)
 test_stable() {
-	rm -rf Cargo.lock target
+	cargo_clippy stable "$2" "$1"
 	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test stable "$@"
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test "${3:-1.40.0}" "$@"
 	test_nightly "$@"
@@ -69,7 +84,7 @@ test_stable() {
 
 # test_unstable(target, arch, toolchain?)
 test_unstable() {
-	rm -rf Cargo.lock target
+	cargo_clippy stable "$2" "$1"
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test stable "$@"
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test "${3:-1.40.0}" "$@"
 	test_nightly "$@"
