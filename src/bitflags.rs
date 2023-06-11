@@ -118,7 +118,7 @@ macro_rules! bitflags {
 
             #[inline]
             fn bitor(mut self, rhs: Self) -> Self {
-                self &= rhs;
+                self |= rhs;
                 self
             }
         }
@@ -128,7 +128,7 @@ macro_rules! bitflags {
 
             #[inline]
             fn bitor(mut self, rhs: $ty) -> Self {
-                self &= rhs;
+                self |= rhs;
                 self
             }
         }

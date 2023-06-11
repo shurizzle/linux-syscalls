@@ -32,6 +32,7 @@ extern "C" {
     ) -> usize;
 
     #[cfg(target_arch = "mips")]
+    #[allow(clippy::too_many_arguments)]
     fn linux_syscalls_rs_syscall7(
         arg0: usize,
         arg1: usize,
@@ -140,7 +141,7 @@ pub unsafe fn syscall6(
 }
 
 #[cfg(target_arch = "mips")]
-#[allow(clippy::missing_safety_doc)]
+#[allow(clippy::missing_safety_doc, clippy::too_many_arguments)]
 #[inline]
 pub unsafe fn syscall7(
     sysno: Sysno,

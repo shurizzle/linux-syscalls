@@ -489,7 +489,7 @@ pub unsafe fn syscall6_readonly(
     }
 }
 
-#[allow(clippy::missing_safety_doc)]
+#[allow(clippy::missing_safety_doc, clippy::too_many_arguments)]
 #[inline]
 pub unsafe fn syscall7(
     sysno: Sysno,
@@ -539,7 +539,7 @@ pub unsafe fn syscall7(
     }
 }
 
-#[allow(clippy::missing_safety_doc)]
+#[allow(clippy::missing_safety_doc, clippy::too_many_arguments)]
 #[inline]
 pub unsafe fn syscall7_readonly(
     sysno: Sysno,

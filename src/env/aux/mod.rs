@@ -84,6 +84,7 @@ impl AuxValue for bool {
 impl Sealed for u32 {}
 impl AuxValue for u32 {
     #[inline]
+    #[allow(clippy::unnecessary_cast)]
     fn from(value: aux_t) -> Self {
         value as u32
     }
