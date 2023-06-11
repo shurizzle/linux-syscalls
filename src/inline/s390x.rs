@@ -2,6 +2,7 @@ use crate::{Errno, Sysno};
 
 use core::arch::asm;
 
+#[doc = include_str!("../../docs/syscall0_readonly.md")]
 #[inline]
 pub unsafe fn syscall0(sysno: Sysno) -> Result<usize, Errno> {
     let ret: usize;
@@ -16,6 +17,7 @@ pub unsafe fn syscall0(sysno: Sysno) -> Result<usize, Errno> {
 
 pub use syscall0 as syscall0_readonly;
 
+#[doc = include_str!("../../docs/syscall1.md")]
 #[inline]
 pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
     let ret: usize;
@@ -28,6 +30,7 @@ pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
     Errno::from_ret(ret)
 }
 
+#[doc = include_str!("../../docs/syscall1_readonly.md")]
 #[inline]
 pub unsafe fn syscall1_readonly(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
     let ret: usize;
@@ -40,6 +43,7 @@ pub unsafe fn syscall1_readonly(sysno: Sysno, arg0: usize) -> Result<usize, Errn
     Errno::from_ret(ret)
 }
 
+#[doc = include_str!("../../docs/syscall1_noreturn.md")]
 #[inline]
 pub unsafe fn syscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
     asm!(
@@ -51,6 +55,7 @@ pub unsafe fn syscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
     )
 }
 
+#[doc = include_str!("../../docs/syscall2.md")]
 #[inline]
 pub unsafe fn syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
     let ret: usize;
@@ -64,6 +69,7 @@ pub unsafe fn syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, 
     Errno::from_ret(ret)
 }
 
+#[doc = include_str!("../../docs/syscall2_readonly.md")]
 #[inline]
 pub unsafe fn syscall2_readonly(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
     let ret: usize;
@@ -77,6 +83,7 @@ pub unsafe fn syscall2_readonly(sysno: Sysno, arg0: usize, arg1: usize) -> Resul
     Errno::from_ret(ret)
 }
 
+#[doc = include_str!("../../docs/syscall3.md")]
 #[inline]
 pub unsafe fn syscall3(
     sysno: Sysno,
@@ -96,6 +103,7 @@ pub unsafe fn syscall3(
     Errno::from_ret(ret)
 }
 
+#[doc = include_str!("../../docs/syscall3_readonly.md")]
 #[inline]
 pub unsafe fn syscall3_readonly(
     sysno: Sysno,
@@ -115,6 +123,7 @@ pub unsafe fn syscall3_readonly(
     Errno::from_ret(ret)
 }
 
+#[doc = include_str!("../../docs/syscall4.md")]
 #[inline]
 pub unsafe fn syscall4(
     sysno: Sysno,
@@ -136,6 +145,7 @@ pub unsafe fn syscall4(
     Errno::from_ret(ret)
 }
 
+#[doc = include_str!("../../docs/syscall4_readonly.md")]
 #[inline]
 pub unsafe fn syscall4_readonly(
     sysno: Sysno,
@@ -157,6 +167,7 @@ pub unsafe fn syscall4_readonly(
     Errno::from_ret(ret)
 }
 
+#[doc = include_str!("../../docs/syscall5.md")]
 #[inline]
 pub unsafe fn syscall5(
     sysno: Sysno,
@@ -182,6 +193,7 @@ pub unsafe fn syscall5(
 
 pub use syscall5 as syscall5_readonly;
 
+#[doc = include_str!("../../docs/syscall6.md")]
 #[inline]
 pub unsafe fn syscall6(
     sysno: Sysno,

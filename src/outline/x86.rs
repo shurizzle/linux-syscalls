@@ -36,26 +36,31 @@ extern "fastcall" {
     static mut LINUX_SYSCALLS_RS_VSYSCALL: AtomicPtr<void>;
 }
 
+#[doc = include_str!("../../docs/syscall0.md")]
 #[inline]
 pub unsafe fn syscall0(sysno: Sysno) -> Result<usize, Errno> {
     Errno::from_ret(linux_syscalls_rs_syscall0(sysno as usize))
 }
 
+#[doc = include_str!("../../docs/syscall1.md")]
 #[inline]
 pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
     Errno::from_ret(linux_syscalls_rs_syscall1(arg0, sysno as usize))
 }
 
+#[doc = include_str!("../../docs/syscall1_noreturn.md")]
 #[inline]
 pub unsafe fn syscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
     linux_syscalls_rs_syscall1_noreturn(arg0, sysno as usize)
 }
 
+#[doc = include_str!("../../docs/syscall2.md")]
 #[inline]
 pub unsafe fn syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
     Errno::from_ret(linux_syscalls_rs_syscall2(arg1, arg0, sysno as usize))
 }
 
+#[doc = include_str!("../../docs/syscall3.md")]
 #[inline]
 pub unsafe fn syscall3(
     sysno: Sysno,
@@ -66,6 +71,7 @@ pub unsafe fn syscall3(
     Errno::from_ret(linux_syscalls_rs_syscall3(arg1, arg2, arg0, sysno as usize))
 }
 
+#[doc = include_str!("../../docs/syscall4.md")]
 #[inline]
 pub unsafe fn syscall4(
     sysno: Sysno,
@@ -83,6 +89,7 @@ pub unsafe fn syscall4(
     ))
 }
 
+#[doc = include_str!("../../docs/syscall5.md")]
 #[inline]
 pub unsafe fn syscall5(
     sysno: Sysno,
@@ -102,6 +109,7 @@ pub unsafe fn syscall5(
     ))
 }
 
+#[doc = include_str!("../../docs/syscall6.md")]
 #[inline]
 pub unsafe fn syscall6(
     sysno: Sysno,

@@ -52,12 +52,22 @@ pub fn init() {
 }
 
 #[cfg(any(doc, feature = "bare"))]
+/// Initialize library from the environment list pointer (`char **envp`).
+///
+/// # Safety
+///
+/// Dealing with pointers is unsafe by definition.
 #[allow(clippy::not_unsafe_ptr_arg_deref)]
 pub unsafe fn init_from_environ(env: *const *const u8) {
     inner_init(aux_from_environ(env))
 }
 
 #[cfg(any(doc, feature = "bare"))]
+/// Initialize library from arguments count and arguments list (`int argc, char **argv`).
+///
+/// # Safety
+///
+/// Dealing with pointers is unsafe by definition.
 #[allow(clippy::not_unsafe_ptr_arg_deref)]
 pub unsafe fn init_from_args(argc: usize, argv: *const *const u8) {
     inner_init(aux_from_environ(argv.add(argc)))
