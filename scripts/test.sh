@@ -16,10 +16,10 @@ output_and_exit_code() {
 	set -e
 }
 
+# expected(toolchain, arch)
 expected() {
-	echo "$1"
-	uname -r | cut -d- -f1
-	echo 69
+	"${SCRIPTPATH}/docker-run.sh" "$1" "$2" \
+		/bin/bash -c "echo '$2' && echo \"\$QEMU_UNAME\" | cut -d- -f1 && echo 69"
 }
 
 # cargo_build(toolchain, arch, target)
@@ -58,10 +58,10 @@ cargo_clippy() {
 # cargo_test(toolchain, target, arch)
 cargo_test() {
 	local expected
-	expected="$(expected "$3")"
 
 	rm -rf Cargo.lock target
 	cargo_build "$1" "$3" "$2"
+	expected="$(expected "$1" "$3")"
 	local res
 	res="$(output_and_exit_code cargo_run "$1" "$3" "$2")"
 	[ "${res}" = "$expected" ]

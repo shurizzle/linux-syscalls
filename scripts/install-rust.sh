@@ -5,7 +5,7 @@ set -eux
 msrv=1.40.0
 if [ $# -eq 0 ]; then
 	msrv="$msrv 1.42.0"
-elif [ "$1" = mips ]; then
+elif [ "$1" = riscv64 ]; then
 	msrv=1.42.0
 fi
 

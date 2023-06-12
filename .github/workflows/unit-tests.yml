@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test
+    environment: master
+    permissions: write-all
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [arm, loongarch64, x86_64, x86, aarch64, riscv64, powerpc, powerpc64, mips, mips64, s390x]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install toolchain
+      run: |
+        ./scripts/install-rust.sh ${{ matrix.arch }}
+        ./scripts/install-targets.sh ${{ matrix.arch }}
+        docker pull shurizzle/toolchain-gnu-musl-cargoenv-${{ matrix.arch }}:latest
+    - name: Check and test
+      run: ./scripts/test.sh ${{ matrix.arch }}
