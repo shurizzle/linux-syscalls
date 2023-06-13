@@ -10,6 +10,7 @@
     any(target_arch = "riscv32", target_arch = "riscv64"),
     path = "riscv.rs"
 )]
+#[cfg_attr(target_arch = "s390x", path = "s390x.rs")]
 mod arch;
 
 #[cfg(target_arch = "x86")]
