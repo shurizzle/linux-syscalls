@@ -55,7 +55,5 @@ pub(crate) static mut VDSO: UnsafeCell<Vdso> = UnsafeCell::new(Vdso(RawVdso {
 pub(crate) unsafe fn init() {
     if let Some(sysinfo) = crate::env::aux::get::<SysInfoHeader>() {
         (*VDSO.get()).0 = RawVdso::from_ptr(sysinfo).expect("Invalid vDSO");
-    } else {
-        return;
     }
 }
