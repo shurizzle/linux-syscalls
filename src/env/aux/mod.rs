@@ -9,6 +9,7 @@ use core::ffi::c_void;
 #[cfg_attr(target_arch = "aarch64", path = "aarch64.rs")]
 #[cfg_attr(target_arch = "loongarch64", path = "loongarch64.rs")]
 #[cfg_attr(target_arch = "s390x", path = "s390x.rs")]
+#[cfg_attr(any(target_arch = "mips", target_arch = "mips64"), path = "mips.rs")]
 mod arch;
 
 pub use arch::{Features, Features2};
