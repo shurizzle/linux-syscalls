@@ -6,6 +6,7 @@ use core::ffi::c_void;
 )]
 #[cfg_attr(any(target_arch = "x86", target_arch = "x86_64"), path = "x86.rs")]
 #[cfg_attr(target_arch = "arm", path = "arm.rs")]
+#[cfg_attr(target_arch = "aarch64", path = "aarch64.rs")]
 mod arch;
 
 pub use arch::{Features, Features2};
