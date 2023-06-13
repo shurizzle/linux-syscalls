@@ -13,16 +13,6 @@ unsafe impl Sync for Vdso {}
 
 impl Vdso {
     #[inline]
-    pub fn clock_gettime(&self) -> *const core::ffi::c_void {
-        self.0.clock_gettime
-    }
-
-    #[inline]
-    pub fn gettimeofday(&self) -> *const core::ffi::c_void {
-        self.0.gettimeofday
-    }
-
-    #[inline]
     pub fn clock_getres(&self) -> *const core::ffi::c_void {
         self.0.clock_getres
     }
