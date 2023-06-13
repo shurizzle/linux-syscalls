@@ -1,6 +1,9 @@
 use core::ffi::c_void;
 
-#[cfg_attr(target_arch = "powerpc64", path = "powerpc64.rs")]
+#[cfg_attr(
+    any(target_arch = "powerpc", target_arch = "powerpc64"),
+    path = "powerpc.rs"
+)]
 #[cfg_attr(any(target_arch = "x86", target_arch = "x86_64"), path = "x86.rs")]
 mod arch;
 
