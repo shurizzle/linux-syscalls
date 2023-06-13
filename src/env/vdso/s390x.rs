@@ -28,12 +28,14 @@ impl Vdso {
     }
 }
 
-pub(crate) static mut VDSO: UnsafeCell<Vdso> = UnsafeCell::new(Vdso(RawVdso {}));
+pub(crate) static mut VDSO: UnsafeCell<Vdso> = UnsafeCell::new(Vdso(RawVdso {
+    clock_getres: core::ptr::null(),
+    clock_gettime: core::ptr::null(),
+    gettimeofday: core::ptr::null(),
+}));
 
 pub(crate) unsafe fn init() {
     if let Some(sysinfo) = crate::env::aux::get::<SysInfoHeader>() {
         (*VDSO.get()).0 = RawVdso::from_ptr(sysinfo).expect("Invalid vDSO");
-    } else {
-        return;
     }
 }
