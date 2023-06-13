@@ -4,6 +4,7 @@
 #[cfg_attr(target_arch = "arm", path = "arm.rs")]
 #[cfg_attr(target_arch = "loongarch64", path = "loongarch64.rs")]
 #[cfg_attr(any(target_arch = "mips", target_arch = "mips64"), path = "mips.rs")]
+#[cfg_attr(target_arch = "powerpc", path = "powerpc.rs")]
 mod arch;
 
 #[cfg(target_arch = "x86")]
