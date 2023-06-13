@@ -6,6 +6,10 @@
 #[cfg_attr(any(target_arch = "mips", target_arch = "mips64"), path = "mips.rs")]
 #[cfg_attr(target_arch = "powerpc", path = "powerpc.rs")]
 #[cfg_attr(target_arch = "powerpc64", path = "powerpc64.rs")]
+#[cfg_attr(
+    any(target_arch = "riscv32", target_arch = "riscv64"),
+    path = "riscv.rs"
+)]
 mod arch;
 
 #[cfg(target_arch = "x86")]
