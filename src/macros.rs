@@ -35,6 +35,37 @@
     ),
     all(target_arch = "powerpc64", target_pointer_width = "64"),
 ))]
+/// Make a syscall and returns a `Result<usize, Errno>`
+///
+/// Accept a [crate::Sysno] as the first parameter and a variable number of arguments (0 to 6).
+/// It calls syscallN under the hood where N is the number of arguments.
+///
+/// The are two variations:
+/// - `[ro]`: use the `_readonly` version of `syscallN`.
+/// - `[!]`: use the `_noreturn` version of `syscall1` (useful for [crate::Sysno::exit]).
+///
+/// Use the previous tags if you what are you doing, otherwise you can omit them.
+///
+/// # Example
+///
+/// ```
+/// use linux_syscalls::{Errno, Sysno, syscall};
+///
+/// let mut buf: [u8; 1024] = [0; 1024];
+/// let buf = loop {
+///     match unsafe { syscall!(Sysno::read, 0, buf.as_mut_ptr(), buf.len()) } {
+///         Ok(n) => break &buf[..n],
+///         Err(Errno::EINTR) => (),
+///         Err(err) => return Err(err),
+///     }
+/// };
+///
+/// // [ro] because write do not change the memory.
+/// unsafe { syscall!([ro] Sysno::write, 1, buf.as_ptr(), buf.len())? };
+///
+/// // [!] because exit do not return.
+/// unsafe { syscall!([!] Sysno::exit, 0) };
+/// ```
 #[macro_export]
 macro_rules! syscall {
     ([ro] $sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr, $arg5:expr $(,)?) => {
@@ -127,6 +158,37 @@ macro_rules! syscall {
 }
 
 #[cfg(all(target_arch = "mips", target_pointer_width = "32"))]
+/// Make a syscall and returns a `Result<usize, Errno>`
+///
+/// Accept a [crate::Sysno] as the first parameter and a variable number of arguments (0 to 7).
+/// It calls syscallN under the hood where N is the number of arguments.
+///
+/// The are two variations:
+/// - `[ro]`: use the `_readonly` version of `syscallN`.
+/// - `[!]`: use the `_noreturn` version of `syscall1` (useful for [crate::Sysno::exit]).
+///
+/// Use the previous tags if you what are you doing, otherwise you can omit them.
+///
+/// # Example
+///
+/// ```
+/// use linux_syscalls::{Errno, Sysno, syscall};
+///
+/// let mut buf: [u8; 1024] = [0; 1024];
+/// let buf = loop {
+///     match unsafe { syscall!(Sysno::read, 0, buf.as_mut_ptr(), buf.len()) } {
+///         Ok(n) => break &buf[..n],
+///         Err(Errno::EINTR) => (),
+///         Err(err) => return Err(err),
+///     }
+/// };
+///
+/// // [ro] because write do not change the memory.
+/// unsafe { syscall!([ro] Sysno::write, 1, buf.as_ptr(), buf.len())? };
+///
+/// // [!] because exit do not return.
+/// unsafe { syscall!([!] Sysno::exit, 0) };
+/// ```
 #[macro_export]
 macro_rules! syscall {
     ([ro] $sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr, $arg5:expr, $arg6:expr $(,)?) => {
