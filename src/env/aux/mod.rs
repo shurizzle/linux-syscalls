@@ -36,10 +36,12 @@ mod __sealed {
 }
 use __sealed::Sealed;
 
+#[doc(hidden)]
 pub trait AuxValue: Sealed {
     fn from(value: aux_t) -> Self;
 }
 
+#[doc(hidden)]
 pub trait VdsoKey: Sealed {
     const ID: aux_t;
     const N: usize;

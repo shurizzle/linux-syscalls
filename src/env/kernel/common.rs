@@ -34,6 +34,7 @@ impl fmt::Display for Version {
     }
 }
 
+#[cfg(feature = "bare")]
 /// A macro to create/query kernel version.
 ///
 /// # Create a Version
@@ -70,6 +71,59 @@ macro_rules! kversion {
     };
     (<= $($rest:tt)+) => {
         *$crate::env::kernel_version() <= $crate::kversion!($($rest)+)
+    };
+    ($major:expr) => {
+        $crate::kversion!($major, 0)
+    };
+    ($major:expr, $minor:expr) => {
+        $crate::kversion!($major, $minor, 0)
+    };
+    ($major:expr, $minor:expr, $revision:expr) => {
+        $crate::env::kernel::Version {
+            major: $major,
+            minor: $minor,
+            revision: $revision,
+        }
+    };
+}
+
+#[cfg(not(feature = "bare"))]
+/// A macro to create/query kernel version.
+///
+/// # Create a Version
+///
+/// `kversion!(major [, minor [, revision]])`
+///
+/// # Query version
+///
+/// `kversion!( (>|<|==|>=|<=) major [, minor [, revision]])`
+///
+/// # Examples
+///
+/// ```
+/// kversion!(4);          // Create version 4.0.0
+/// kversion!(4, 11);      // Create version 4.11.0
+/// kversion!(4, 11, 6)    // Create version 4.11.6
+/// kversion!(>= 4);       // `true` if kernel version is 4.0.0 or superior
+/// kversion!(< 4, 11);    // `true` if kernel version is earlier than 4.11.0
+/// kversion!(== 5, 15, 6) // `true` if kernel is exactly 5.15.6
+/// ```
+#[macro_export]
+macro_rules! kversion {
+    (>  $($rest:tt)+) => {
+        *$crate::env::unchecked_kernel_version()  > $crate::kversion!($($rest)+)
+    };
+    (<  $($rest:tt)+) => {
+        *$crate::env::unchecked_kernel_version()  < $crate::kversion!($($rest)+)
+    };
+    (== $($rest:tt)+) => {
+        *$crate::env::unchecked_kernel_version() == $crate::kversion!($($rest)+)
+    };
+    (>= $($rest:tt)+) => {
+        *$crate::env::unchecked_kernel_version() >= $crate::kversion!($($rest)+)
+    };
+    (<= $($rest:tt)+) => {
+        *$crate::env::unchecked_kernel_version() <= $crate::kversion!($($rest)+)
     };
     ($major:expr) => {
         $crate::kversion!($major, 0)
