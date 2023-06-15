@@ -57,19 +57,19 @@ impl fmt::Display for Version {
 #[macro_export]
 macro_rules! kversion {
     (>  $($rest:tt)+) => {
-        $crate::env::kernel::version()  > $crate::kversion!($($rest)+)
+        *$crate::env::kernel_version()  > $crate::kversion!($($rest)+)
     };
     (<  $($rest:tt)+) => {
-        $crate::env::kernel::version()  < $crate::kversion!($($rest)+)
+        *$crate::env::kernel_version()  < $crate::kversion!($($rest)+)
     };
     (== $($rest:tt)+) => {
-        $crate::env::kernel::version() == $crate::kversion!($($rest)+)
+        *$crate::env::kernel_version() == $crate::kversion!($($rest)+)
     };
     (>= $($rest:tt)+) => {
-        $crate::env::kernel::version() >= $crate::kversion!($($rest)+)
+        *$crate::env::kernel_version() >= $crate::kversion!($($rest)+)
     };
     (<= $($rest:tt)+) => {
-        $crate::env::kernel::version() <= $crate::kversion!($($rest)+)
+        *$crate::env::kernel_version() <= $crate::kversion!($($rest)+)
     };
     ($major:expr) => {
         $crate::kversion!($major, 0)
