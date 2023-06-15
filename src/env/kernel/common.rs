@@ -162,11 +162,11 @@ unsafe fn cstr(s: &[u8]) -> &[u8] {
 }
 
 #[inline]
-pub(crate) unsafe fn version() -> Version {
-    *KERNEL_VERSION.get()
+pub(crate) unsafe fn version() -> &'static Version {
+    &*KERNEL_VERSION.get()
 }
 
 #[inline]
-pub(crate) unsafe fn uname() -> utsname {
-    *UNAME.get()
+pub(crate) unsafe fn uname() -> &'static utsname {
+    &*UNAME.get()
 }

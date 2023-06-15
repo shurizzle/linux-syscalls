@@ -11,13 +11,13 @@ pub fn getauxval<T: aux::VdsoKey>() -> Option<T::Item> {
     unsafe { aux::get::<T>() }
 }
 
-pub fn kernel_version() -> Version {
+pub fn kernel_version() -> &'static Version {
     #[cfg(not(feature = "bare"))]
     crate::init();
     unsafe { kernel::version() }
 }
 
-pub fn uname() -> utsname {
+pub fn uname() -> &'static utsname {
     #[cfg(not(feature = "bare"))]
     crate::init();
     unsafe { kernel::uname() }
