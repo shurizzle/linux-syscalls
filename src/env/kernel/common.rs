@@ -20,6 +20,7 @@ pub struct utsname {
 }
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
+/// Structure describing the kernel version.
 pub struct Version {
     pub major: u32,
     pub minor: u32,
@@ -33,6 +34,26 @@ impl fmt::Display for Version {
     }
 }
 
+/// A macro to create/query kernel version.
+///
+/// # Create a Version
+///
+/// `kversion!(major [, minor [, revision]])`
+///
+/// # Query version
+///
+/// `kversion!( (>|<|==|>=|<=) major [, minor [, revision]])`
+///
+/// # Examples
+///
+/// ```
+/// kversion!(4);          // Create version 4.0.0
+/// kversion!(4, 11);      // Create version 4.11.0
+/// kversion!(4, 11, 6)    // Create version 4.11.6
+/// kversion!(>= 4);       // `true` if kernel version is 4.0.0 or superior
+/// kversion!(< 4, 11);    // `true` if kernel version is earlier than 4.11.0
+/// kversion!(== 5, 15, 6) // `true` if kernel is exactly 5.15.6
+/// ```
 #[macro_export]
 macro_rules! kversion {
     (>  $($rest:tt)+) => {
