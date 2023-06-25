@@ -3,7 +3,7 @@ exclude = ["bare"]
 
 [package]
 name = "linux-syscalls"
-version = "0.0.0"
+version = "0.1.0"
 edition = "2018"
 
 [package.metadata]
