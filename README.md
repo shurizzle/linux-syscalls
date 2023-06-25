@@ -1,5 +1,10 @@
 # linux-syscalls
 
+![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/shurizzle/linux-syscalls/unit-tests.yml?branch=master&style=for-the-badge)
+[![Crates.io](https://img.shields.io/crates/v/linux-syscalls?style=for-the-badge)](https://crates.io/crates/linux-syscalls)
+[![docs.rs](https://img.shields.io/docsrs/linux-syscalls?style=for-the-badge)](https://docs.rs/linux-syscalls)
+![Crates.io](https://img.shields.io/crates/l/linux-syscalls?style=for-the-badge)
+
 A library to easily deal with linux system calls.
 
 ![One does not simply make a syscall](https://i.imgflip.com/7ndzqd.jpg "memino")
