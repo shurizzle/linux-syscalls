@@ -41,7 +41,7 @@ pub trait AuxValue: Sealed {
     fn from(value: aux_t) -> Self;
 }
 
-#[doc(hidden)]
+/// A trait representing a valid key for [crate::env::getauxval] function.
 pub trait VdsoKey: Sealed {
     const ID: aux_t;
     const N: usize;

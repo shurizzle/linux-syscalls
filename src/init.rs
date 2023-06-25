@@ -46,6 +46,8 @@ unsafe fn aux_ptr() -> *const () {
     aux_from_environ(env)
 }
 
+/// Initialize the environment for the library.
+/// It's recommended to call it before anything else in the main function.
 #[cfg(any(doc, not(feature = "bare")))]
 #[cfg_attr(docs_rs, doc(cfg(not(feature = "bare"))))]
 pub fn init() {
@@ -54,6 +56,7 @@ pub fn init() {
 
 #[cfg(any(doc, feature = "bare"))]
 /// Initialize library from the environment list pointer (`char **envp`).
+/// It's recommended to call it before anything else in the main function.
 ///
 /// # Safety
 ///
@@ -66,6 +69,7 @@ pub unsafe fn init_from_environ(env: *const *const u8) {
 
 #[cfg(any(doc, feature = "bare"))]
 /// Initialize library from arguments count and arguments list (`int argc, char **argv`).
+/// It's recommended to call it before anything else in the main function.
 ///
 /// # Safety
 ///
