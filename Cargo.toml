@@ -34,7 +34,6 @@ targets = [
   "x86_64-unknown-linux-gnux32",
 ]
 rustdoc-args = ["--cfg", "docs_rs"]
-cargo-args = ["--no-deps"]
 
 [features]
 default = ["std"]
