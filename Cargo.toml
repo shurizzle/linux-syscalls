@@ -3,7 +3,7 @@ exclude = ["bare"]
 
 [package]
 name = "linux-syscalls"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2018"
 authors = ["shurizzle <shura1991@gmail.com>"]
 license = "MIT"
