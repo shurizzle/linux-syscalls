@@ -5,6 +5,14 @@ exclude = ["bare"]
 name = "linux-syscalls"
 version = "0.1.0"
 edition = "2018"
+authors = ["shurizzle <shura1991@gmail.com>"]
+license = "MIT"
+description = "A library to easily invoking linux system calls."
+keywords = ["syscall", "no_std", "linux"]
+readme = "README.md"
+repository = "https://github.com/shurizzle/linux-syscalls"
+homepage = "https://github.com/shurizzle/linux-syscalls"
+documentation = "https://docs.rs/linux-syscalls"
 
 [package.metadata]
 msrv = "1.40.0"
@@ -29,7 +37,8 @@ rustdoc-args = ["--cfg", "docs_rs"]
 cargo-args = ["--no-deps"]
 
 [features]
-default = []
+default = ["std"]
+std = ["linux-errnos/std"]
 bare = []
 
 [build-dependencies]
