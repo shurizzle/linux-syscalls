@@ -1,4 +1,4 @@
-use std::{fmt, io::Write, process::Stdio};
+use std::fmt;
 
 #[allow(clippy::needless_return)]
 fn main() {
@@ -120,26 +120,19 @@ fn main_loongarch64() {
     }
 }
 
+#[cfg(unix)]
 fn has_thumb_mode() -> bool {
-    let mut child = cc::Build::new()
-        .get_compiler()
-        .to_command()
-        .arg("-O0")
-        .arg("-c")
-        .arg("-xc")
-        .arg("-o/dev/null")
-        .arg("-")
-        .stdin(Stdio::piped())
-        .stderr(Stdio::null())
-        .stdout(Stdio::null())
-        .spawn()
-        .unwrap();
-    {
-        let mut stdin = child.stdin.take().unwrap();
-        stdin.write_all("void f() { register long r7 __asm__(\"r7\") = 0; __asm__ __volatile__ (\"udf #16\" : : \"r\"(r7) : \"memory\"); }".as_bytes()).unwrap();
-    }
+    use std::os::unix::prelude::OsStrExt;
 
-    !child.wait().unwrap().success()
+    std::env::var_os("TARGET")
+        .unwrap()
+        .as_bytes()
+        .starts_with(b"thumb")
+}
+
+#[cfg(not(unix))]
+fn has_thumb_mode() -> bool {
+    false
 }
 
 fn build_trampoline(arch: &str) {
