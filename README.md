@@ -36,6 +36,7 @@ syscalls on x86 machines.
 
 - `std`: enable std support.
 - `bare`: do not try to automatically initialize the library.
+- `libc-compat`: forward this feature to `linux-errnos`.
 
 ### `#![no_std]`
 

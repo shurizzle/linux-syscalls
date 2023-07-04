@@ -3,7 +3,7 @@ exclude = ["bare"]
 
 [package]
 name = "linux-syscalls"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2018"
 authors = ["shurizzle <shura1991@gmail.com>"]
 license = "MIT"
@@ -38,6 +38,7 @@ rustdoc-args = ["--cfg", "docs_rs"]
 [features]
 default = ["std"]
 std = ["linux-errnos/std"]
+libc-compat = ["linux-errnos/libc-compat"]
 bare = []
 
 [build-dependencies]
