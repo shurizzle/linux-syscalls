@@ -8,7 +8,6 @@ install_x86_64() {
 
 	rustup target add "${targets[@]}" --toolchain stable
 	rustup target add "${targets[@]}" --toolchain 1.40.0
-	rustup target add "${targets[@]}" --toolchain nightly
 }
 
 install_x86() {
@@ -17,7 +16,6 @@ install_x86() {
 
 	rustup target add "${targets[@]}" --toolchain stable
 	rustup target add "${targets[@]}" --toolchain 1.40.0
-	rustup target add "${targets[@]}" --toolchain nightly
 }
 
 install_arm() {
@@ -30,7 +28,6 @@ install_arm() {
 
 	rustup target add "${targets[@]}" --toolchain stable
 	rustup target add "${targets[@]}" --toolchain 1.40.0
-	rustup target add "${targets[@]}" --toolchain nightly
 }
 
 install_aarch64() {
@@ -39,13 +36,11 @@ install_aarch64() {
 
 	rustup target add "${targets[@]}" --toolchain stable
 	rustup target add "${targets[@]}" --toolchain 1.40.0
-	rustup target add "${targets[@]}" --toolchain nightly
 }
 
 install_riscv64() {
 	rustup target add riscv64gc-unknown-linux-gnu --toolchain stable
 	rustup target add riscv64gc-unknown-linux-gnu --toolchain 1.42.0
-	rustup target add riscv64gc-unknown-linux-gnu --toolchain nightly
 }
 
 install_loongarch64() {
@@ -55,7 +50,6 @@ install_loongarch64() {
 install_powerpc() {
 	rustup target add powerpc-unknown-linux-gnu --toolchain stable
 	rustup target add powerpc-unknown-linux-gnu --toolchain 1.40.0
-	rustup target add powerpc-unknown-linux-gnu --toolchain nightly
 }
 
 install_powerpc64() {
@@ -64,7 +58,6 @@ install_powerpc64() {
 
 	rustup target add "${targets[@]}" --toolchain stable
 	rustup target add "${targets[@]}" --toolchain 1.40.0
-	rustup target add "${targets[@]}" --toolchain nightly
 }
 
 install_mips() {
@@ -73,7 +66,6 @@ install_mips() {
 
 	rustup target add "${targets[@]}" --toolchain stable
 	rustup target add "${targets[@]}" --toolchain 1.40.0
-	rustup target add "${targets[@]}" --toolchain nightly
 }
 
 install_mips64() {
@@ -82,7 +74,6 @@ install_mips64() {
 
 	rustup target add "${targets[@]}" --toolchain stable
 	rustup target add "${targets[@]}" --toolchain 1.40.0
-	rustup target add "${targets[@]}" --toolchain nightly
 }
 
 install_s390x() {
@@ -90,7 +81,6 @@ install_s390x() {
 
 	rustup target add s390x-unknown-linux-gnu --toolchain stable
 	rustup target add s390x-unknown-linux-gnu --toolchain 1.40.0
-	rustup target add s390x-unknown-linux-gnu --toolchain nightly
 }
 
 if [ $# -eq 0 ]; then

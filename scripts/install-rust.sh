@@ -7,12 +7,19 @@ if [ $# -eq 0 ]; then
 	msrv="$msrv 1.42.0"
 elif [ "$1" = riscv64 ]; then
 	msrv=1.42.0
+elif [ "$1" = loongarch64 ]; then
+	msrv=no
 fi
 
-rustup update $msrv stable nightly --no-self-update
-rustup component add clippy rust-src --toolchain nightly
-rustup component add clippy --toolchain stable
-rustup default stable
+if [ "$msrv" = no ]; then
+	rustup update nightly --no-self-update
+	rustup component add clippy rust-src --toolchain nightly
+	rustup default nightly
+else
+	rustup update $msrv stable --no-self-update
+	rustup component add clippy --toolchain stable
+	rustup default stable
+fi
 
 if [ -n "${GITHUB_ENV:-}" ]; then
 	(

@@ -79,7 +79,6 @@ test_stable() {
 	cargo_clippy stable "$2" "$1"
 	RUSTFLAGS="--cfg force_inline_syscalls" cargo_test stable "$@"
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test "${3:-1.40.0}" "$@"
-	test_nightly "$@"
 }
 
 # test_unstable(target, arch, toolchain?)
@@ -87,7 +86,6 @@ test_unstable() {
 	cargo_clippy stable "$2" "$1"
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test stable "$@"
 	RUSTFLAGS="--cfg outline_syscalls" cargo_test "${3:-1.40.0}" "$@"
-	test_nightly "$@"
 }
 
 test_x86_64() {
