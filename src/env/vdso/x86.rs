@@ -41,6 +41,21 @@ impl Vdso {
     pub fn time(&self) -> *const core::ffi::c_void {
         self.0.time
     }
+
+    #[inline]
+    pub fn clock_getres(&self) -> *const core::ffi::c_void {
+        self.0.clock_getres
+    }
+
+    #[inline]
+    pub fn clock_gettime64(&self) -> *const core::ffi::c_void {
+        self.0.clock_gettime64
+    }
+
+    #[inline]
+    pub fn getcpu(&self) -> *const core::ffi::c_void {
+        self.0.getcpu
+    }
 }
 
 pub(crate) static mut VDSO: UnsafeCell<Vdso> = UnsafeCell::new(Vdso(RawVdso {
@@ -50,6 +65,9 @@ pub(crate) static mut VDSO: UnsafeCell<Vdso> = UnsafeCell::new(Vdso(RawVdso {
     clock_gettime: core::ptr::null(),
     gettimeofday: core::ptr::null(),
     time: core::ptr::null(),
+    clock_getres: core::ptr::null(),
+    clock_gettime64: core::ptr::null(),
+    getcpu: core::ptr::null(),
 }));
 
 pub(crate) unsafe fn quasi_init() {

@@ -21,11 +21,23 @@ impl Vdso {
     pub fn gettimeofday(&self) -> *const core::ffi::c_void {
         self.0.gettimeofday
     }
+
+    #[inline]
+    pub fn clock_getres(&self) -> *const core::ffi::c_void {
+        self.0.clock_getres
+    }
+
+    #[inline]
+    pub fn clock_gettime64(&self) -> *const core::ffi::c_void {
+        self.0.clock_gettime64
+    }
 }
 
 pub(crate) static mut VDSO: UnsafeCell<Vdso> = UnsafeCell::new(Vdso(RawVdso {
     gettimeofday: core::ptr::null(),
     clock_gettime: core::ptr::null(),
+    clock_getres: core::ptr::null(),
+    clock_gettime64: core::ptr::null(),
 }));
 
 pub(crate) unsafe fn init() {
