@@ -1,10 +1,10 @@
-use crate::{Errno, Sysno};
+use crate::Sysno;
 
 use core::arch::asm;
 
 #[allow(clippy::missing_safety_doc)]
-#[inline]
-pub unsafe fn syscall0(sysno: Sysno) -> Result<usize, Errno> {
+#[inline(always)]
+pub unsafe fn raw_syscall0(sysno: Sysno) -> usize {
     let ret;
     asm!(
         "syscall",
@@ -13,14 +13,14 @@ pub unsafe fn syscall0(sysno: Sysno) -> Result<usize, Errno> {
         lateout("r11") _,
         options(nostack, preserves_flags, readonly)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
-pub use syscall0 as syscall0_readonly;
+pub use raw_syscall0 as raw_syscall0_readonly;
 
 #[allow(clippy::missing_safety_doc)]
-#[inline]
-pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
+#[inline(always)]
+pub unsafe fn raw_syscall1(sysno: Sysno, arg0: usize) -> usize {
     let ret;
     asm!(
         "syscall",
@@ -30,12 +30,12 @@ pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
         lateout("r11") _,
         options(nostack, preserves_flags)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[allow(clippy::missing_safety_doc)]
-#[inline]
-pub unsafe fn syscall1_readonly(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
+#[inline(always)]
+pub unsafe fn raw_syscall1_readonly(sysno: Sysno, arg0: usize) -> usize {
     let ret;
     asm!(
         "syscall",
@@ -45,11 +45,11 @@ pub unsafe fn syscall1_readonly(sysno: Sysno, arg0: usize) -> Result<usize, Errn
         lateout("r11") _,
         options(nostack, preserves_flags, readonly)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[allow(clippy::missing_safety_doc)]
-#[inline]
+#[inline(always)]
 pub unsafe fn syscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
     asm!(
         "syscall",
@@ -61,8 +61,8 @@ pub unsafe fn syscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
 }
 
 #[allow(clippy::missing_safety_doc)]
-#[inline]
-pub unsafe fn syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
+#[inline(always)]
+pub unsafe fn raw_syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> usize {
     let ret;
     asm!(
         "syscall",
@@ -73,12 +73,12 @@ pub unsafe fn syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, 
         lateout("r11") _,
         options(nostack, preserves_flags)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[allow(clippy::missing_safety_doc)]
-#[inline]
-pub unsafe fn syscall2_readonly(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
+#[inline(always)]
+pub unsafe fn raw_syscall2_readonly(sysno: Sysno, arg0: usize, arg1: usize) -> usize {
     let ret;
     asm!(
         "syscall",
@@ -89,17 +89,12 @@ pub unsafe fn syscall2_readonly(sysno: Sysno, arg0: usize, arg1: usize) -> Resul
         lateout("r11") _,
         options(nostack, preserves_flags, readonly)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[allow(clippy::missing_safety_doc)]
-#[inline]
-pub unsafe fn syscall3(
-    sysno: Sysno,
-    arg0: usize,
-    arg1: usize,
-    arg2: usize,
-) -> Result<usize, Errno> {
+#[inline(always)]
+pub unsafe fn raw_syscall3(sysno: Sysno, arg0: usize, arg1: usize, arg2: usize) -> usize {
     let ret;
     asm!(
         "syscall",
@@ -111,17 +106,12 @@ pub unsafe fn syscall3(
         lateout("r11") _,
         options(nostack, preserves_flags)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[allow(clippy::missing_safety_doc)]
-#[inline]
-pub unsafe fn syscall3_readonly(
-    sysno: Sysno,
-    arg0: usize,
-    arg1: usize,
-    arg2: usize,
-) -> Result<usize, Errno> {
+#[inline(always)]
+pub unsafe fn raw_syscall3_readonly(sysno: Sysno, arg0: usize, arg1: usize, arg2: usize) -> usize {
     let ret;
     asm!(
         "syscall",
@@ -133,18 +123,18 @@ pub unsafe fn syscall3_readonly(
         lateout("r11") _,
         options(nostack, preserves_flags, readonly)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[allow(clippy::missing_safety_doc)]
-#[inline]
-pub unsafe fn syscall4(
+#[inline(always)]
+pub unsafe fn raw_syscall4(
     sysno: Sysno,
     arg0: usize,
     arg1: usize,
     arg2: usize,
     arg3: usize,
-) -> Result<usize, Errno> {
+) -> usize {
     let ret;
     asm!(
         "syscall",
@@ -157,18 +147,18 @@ pub unsafe fn syscall4(
         lateout("r11") _,
         options(nostack, preserves_flags)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[allow(clippy::missing_safety_doc)]
-#[inline]
-pub unsafe fn syscall4_readonly(
+#[inline(always)]
+pub unsafe fn raw_syscall4_readonly(
     sysno: Sysno,
     arg0: usize,
     arg1: usize,
     arg2: usize,
     arg3: usize,
-) -> Result<usize, Errno> {
+) -> usize {
     let ret;
     asm!(
         "syscall",
@@ -181,19 +171,19 @@ pub unsafe fn syscall4_readonly(
         lateout("r11") _,
         options(nostack, preserves_flags, readonly)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[allow(clippy::missing_safety_doc)]
-#[inline]
-pub unsafe fn syscall5(
+#[inline(always)]
+pub unsafe fn raw_syscall5(
     sysno: Sysno,
     arg0: usize,
     arg1: usize,
     arg2: usize,
     arg3: usize,
     arg4: usize,
-) -> Result<usize, Errno> {
+) -> usize {
     let ret;
     asm!(
         "syscall",
@@ -207,19 +197,19 @@ pub unsafe fn syscall5(
         lateout("r11") _,
         options(nostack, preserves_flags)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[allow(clippy::missing_safety_doc)]
-#[inline]
-pub unsafe fn syscall5_readonly(
+#[inline(always)]
+pub unsafe fn raw_syscall5_readonly(
     sysno: Sysno,
     arg0: usize,
     arg1: usize,
     arg2: usize,
     arg3: usize,
     arg4: usize,
-) -> Result<usize, Errno> {
+) -> usize {
     let ret;
     asm!(
         "syscall",
@@ -233,12 +223,12 @@ pub unsafe fn syscall5_readonly(
         lateout("r11") _,
         options(nostack, preserves_flags, readonly)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[allow(clippy::missing_safety_doc)]
-#[inline]
-pub unsafe fn syscall6(
+#[inline(always)]
+pub unsafe fn raw_syscall6(
     sysno: Sysno,
     arg0: usize,
     arg1: usize,
@@ -246,7 +236,7 @@ pub unsafe fn syscall6(
     arg3: usize,
     arg4: usize,
     arg5: usize,
-) -> Result<usize, Errno> {
+) -> usize {
     let ret;
     asm!(
         "syscall",
@@ -261,12 +251,12 @@ pub unsafe fn syscall6(
         lateout("r11") _,
         options(nostack, preserves_flags)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[allow(clippy::missing_safety_doc)]
-#[inline]
-pub unsafe fn syscall6_readonly(
+#[inline(always)]
+pub unsafe fn raw_syscall6_readonly(
     sysno: Sysno,
     arg0: usize,
     arg1: usize,
@@ -274,7 +264,7 @@ pub unsafe fn syscall6_readonly(
     arg3: usize,
     arg4: usize,
     arg5: usize,
-) -> Result<usize, Errno> {
+) -> usize {
     let ret;
     asm!(
         "syscall",
@@ -289,8 +279,10 @@ pub unsafe fn syscall6_readonly(
         lateout("r11") _,
         options(nostack, preserves_flags, readonly)
     );
-    Errno::from_ret(ret)
+    ret
 }
+
+include!("_syscalls.rs");
 
 #[inline(always)]
 pub(crate) fn init() {}

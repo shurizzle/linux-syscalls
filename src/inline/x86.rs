@@ -1,4 +1,4 @@
-use crate::{Errno, Sysno};
+use crate::Sysno;
 
 use core::arch::asm;
 
@@ -8,7 +8,7 @@ unsafe fn callee() -> usize {
 }
 
 #[inline(always)]
-unsafe fn vsyscall0(sysno: Sysno) -> Result<usize, Errno> {
+unsafe fn vsyscall0(sysno: Sysno) -> usize {
     let ret;
     asm!(
         "call {callee}",
@@ -16,11 +16,11 @@ unsafe fn vsyscall0(sysno: Sysno) -> Result<usize, Errno> {
         inlateout("rax") sysno as usize => ret,
         options(preserves_flags)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[inline(always)]
-unsafe fn vsyscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
+unsafe fn vsyscall1(sysno: Sysno, arg0: usize) -> usize {
     let ret: usize;
     asm!(
         "call {callee}",
@@ -29,7 +29,7 @@ unsafe fn vsyscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
         in("ebx") arg0,
         options(preserves_flags)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[inline(always)]
@@ -45,7 +45,7 @@ unsafe fn vsyscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
 }
 
 #[inline(always)]
-unsafe fn vsyscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
+unsafe fn vsyscall2(sysno: Sysno, arg0: usize, arg1: usize) -> usize {
     let ret: usize;
     asm!(
         "call {callee}",
@@ -55,11 +55,11 @@ unsafe fn vsyscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Err
         in("ecx") arg1,
         options(preserves_flags)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[inline(always)]
-unsafe fn vsyscall3(sysno: Sysno, arg0: usize, arg1: usize, arg2: usize) -> Result<usize, Errno> {
+unsafe fn vsyscall3(sysno: Sysno, arg0: usize, arg1: usize, arg2: usize) -> usize {
     let ret: usize;
     asm!(
         "call {callee}",
@@ -70,17 +70,11 @@ unsafe fn vsyscall3(sysno: Sysno, arg0: usize, arg1: usize, arg2: usize) -> Resu
         in("edx") arg2,
         options(preserves_flags)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[inline(always)]
-unsafe fn vsyscall4(
-    sysno: Sysno,
-    arg0: usize,
-    arg1: usize,
-    arg2: usize,
-    arg3: usize,
-) -> Result<usize, Errno> {
+unsafe fn vsyscall4(sysno: Sysno, arg0: usize, arg1: usize, arg2: usize, arg3: usize) -> usize {
     let ret: usize;
     asm!(
         "xchg esi, {arg3}",
@@ -94,7 +88,7 @@ unsafe fn vsyscall4(
         in("edx") arg2,
         options(preserves_flags)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[inline(always)]
@@ -105,7 +99,7 @@ unsafe fn vsyscall5(
     arg2: usize,
     arg3: usize,
     arg4: usize,
-) -> Result<usize, Errno> {
+) -> usize {
     // NOTE: We don't have enough registers to handle this and we can't
     // use stack so we pass a slice as a secondary stack.
     let ret: usize;
@@ -131,7 +125,7 @@ unsafe fn vsyscall5(
         in("edi") arg4,
         options(preserves_flags)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[inline(always)]
@@ -143,7 +137,7 @@ unsafe fn vsyscall6(
     arg3: usize,
     arg4: usize,
     arg5: usize,
-) -> Result<usize, Errno> {
+) -> usize {
     // NOTE: Same as syscall5 but we have to fight for ebp too.
 
     let ret: usize;
@@ -172,12 +166,12 @@ unsafe fn vsyscall6(
         in("edi") arg4,
         options(preserves_flags)
     );
-    Errno::from_ret(ret)
+    ret
 }
 
 #[allow(clippy::missing_safety_doc)]
-#[inline]
-pub unsafe fn syscall0(sysno: Sysno) -> Result<usize, Errno> {
+#[inline(always)]
+pub unsafe fn raw_syscall0(sysno: Sysno) -> usize {
     if callee() == 0 {
         let ret;
         asm!(
@@ -185,16 +179,16 @@ pub unsafe fn syscall0(sysno: Sysno) -> Result<usize, Errno> {
             inlateout("eax") sysno as usize => ret,
             options(nostack, preserves_flags, readonly)
         );
-        Errno::from_ret(ret)
+        ret
     } else {
         vsyscall0(sysno)
     }
 }
 
-pub use syscall0 as syscall0_readonly;
+pub use raw_syscall0 as raw_syscall0_readonly;
 
 #[allow(clippy::missing_safety_doc)]
-pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
+pub unsafe fn raw_syscall1(sysno: Sysno, arg0: usize) -> usize {
     if callee() == 0 {
         let ret;
         asm!(
@@ -203,14 +197,14 @@ pub unsafe fn syscall1(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
             in("ebx") arg0,
             options(nostack, preserves_flags)
         );
-        Errno::from_ret(ret)
+        ret
     } else {
         vsyscall1(sysno, arg0)
     }
 }
 
 #[allow(clippy::missing_safety_doc)]
-pub unsafe fn syscall1_readonly(sysno: Sysno, arg0: usize) -> Result<usize, Errno> {
+pub unsafe fn raw_syscall1_readonly(sysno: Sysno, arg0: usize) -> usize {
     if callee() == 0 {
         let ret;
         asm!(
@@ -219,7 +213,7 @@ pub unsafe fn syscall1_readonly(sysno: Sysno, arg0: usize) -> Result<usize, Errn
             in("ebx") arg0,
             options(nostack, preserves_flags, readonly)
         );
-        Errno::from_ret(ret)
+        ret
     } else {
         vsyscall1(sysno, arg0)
     }
@@ -241,7 +235,7 @@ pub unsafe fn syscall1_noreturn(sysno: Sysno, arg0: usize) -> ! {
 }
 
 #[allow(clippy::missing_safety_doc)]
-pub unsafe fn syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
+pub unsafe fn raw_syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> usize {
     if callee() == 0 {
         let ret;
         asm!(
@@ -251,14 +245,14 @@ pub unsafe fn syscall2(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, 
             in("ecx") arg1,
             options(nostack, preserves_flags)
         );
-        Errno::from_ret(ret)
+        ret
     } else {
         vsyscall2(sysno, arg0, arg1)
     }
 }
 
 #[allow(clippy::missing_safety_doc)]
-pub unsafe fn syscall2_readonly(sysno: Sysno, arg0: usize, arg1: usize) -> Result<usize, Errno> {
+pub unsafe fn raw_syscall2_readonly(sysno: Sysno, arg0: usize, arg1: usize) -> usize {
     if callee() == 0 {
         let ret;
         asm!(
@@ -268,19 +262,14 @@ pub unsafe fn syscall2_readonly(sysno: Sysno, arg0: usize, arg1: usize) -> Resul
             in("ecx") arg1,
             options(nostack, preserves_flags, readonly)
         );
-        Errno::from_ret(ret)
+        ret
     } else {
         vsyscall2(sysno, arg0, arg1)
     }
 }
 
 #[allow(clippy::missing_safety_doc)]
-pub unsafe fn syscall3(
-    sysno: Sysno,
-    arg0: usize,
-    arg1: usize,
-    arg2: usize,
-) -> Result<usize, Errno> {
+pub unsafe fn raw_syscall3(sysno: Sysno, arg0: usize, arg1: usize, arg2: usize) -> usize {
     if callee() == 0 {
         let ret;
         asm!(
@@ -291,19 +280,14 @@ pub unsafe fn syscall3(
             in("edx") arg2,
             options(nostack, preserves_flags)
         );
-        Errno::from_ret(ret)
+        ret
     } else {
         vsyscall3(sysno, arg0, arg1, arg2)
     }
 }
 
 #[allow(clippy::missing_safety_doc)]
-pub unsafe fn syscall3_readonly(
-    sysno: Sysno,
-    arg0: usize,
-    arg1: usize,
-    arg2: usize,
-) -> Result<usize, Errno> {
+pub unsafe fn raw_syscall3_readonly(sysno: Sysno, arg0: usize, arg1: usize, arg2: usize) -> usize {
     if callee() == 0 {
         let ret;
         asm!(
@@ -314,20 +298,20 @@ pub unsafe fn syscall3_readonly(
             in("edx") arg2,
             options(nostack, preserves_flags, readonly)
         );
-        Errno::from_ret(ret)
+        ret
     } else {
         vsyscall3(sysno, arg0, arg1, arg2)
     }
 }
 
 #[allow(clippy::missing_safety_doc)]
-pub unsafe fn syscall4(
+pub unsafe fn raw_syscall4(
     sysno: Sysno,
     arg0: usize,
     arg1: usize,
     arg2: usize,
     arg3: usize,
-) -> Result<usize, Errno> {
+) -> usize {
     if callee() == 0 {
         let ret;
         // We need to put arg3 in esi but asm macro won't let us do it directly.
@@ -343,20 +327,20 @@ pub unsafe fn syscall4(
             in("edx") arg2,
             options(nostack, preserves_flags)
         );
-        Errno::from_ret(ret)
+        ret
     } else {
         vsyscall4(sysno, arg0, arg1, arg2, arg3)
     }
 }
 
 #[allow(clippy::missing_safety_doc)]
-pub unsafe fn syscall4_readonly(
+pub unsafe fn raw_syscall4_readonly(
     sysno: Sysno,
     arg0: usize,
     arg1: usize,
     arg2: usize,
     arg3: usize,
-) -> Result<usize, Errno> {
+) -> usize {
     if callee() == 0 {
         let ret;
         asm!(
@@ -370,21 +354,21 @@ pub unsafe fn syscall4_readonly(
             in("edx") arg2,
             options(nostack, preserves_flags, readonly)
         );
-        Errno::from_ret(ret)
+        ret
     } else {
         vsyscall4(sysno, arg0, arg1, arg2, arg3)
     }
 }
 
 #[allow(clippy::missing_safety_doc)]
-pub unsafe fn syscall5(
+pub unsafe fn raw_syscall5(
     sysno: Sysno,
     arg0: usize,
     arg1: usize,
     arg2: usize,
     arg3: usize,
     arg4: usize,
-) -> Result<usize, Errno> {
+) -> usize {
     if callee() == 0 {
         let ret;
         asm!(
@@ -399,21 +383,21 @@ pub unsafe fn syscall5(
             in("edi") arg4,
             options(nostack, preserves_flags)
         );
-        Errno::from_ret(ret)
+        ret
     } else {
         vsyscall5(sysno, arg0, arg1, arg2, arg3, arg4)
     }
 }
 
 #[allow(clippy::missing_safety_doc)]
-pub unsafe fn syscall5_readonly(
+pub unsafe fn raw_syscall5_readonly(
     sysno: Sysno,
     arg0: usize,
     arg1: usize,
     arg2: usize,
     arg3: usize,
     arg4: usize,
-) -> Result<usize, Errno> {
+) -> usize {
     if callee() == 0 {
         let ret;
         asm!(
@@ -428,14 +412,14 @@ pub unsafe fn syscall5_readonly(
             in("edi") arg4,
             options(nostack, preserves_flags, readonly)
         );
-        Errno::from_ret(ret)
+        ret
     } else {
         vsyscall5(sysno, arg0, arg1, arg2, arg3, arg4)
     }
 }
 
 #[allow(clippy::missing_safety_doc)]
-pub unsafe fn syscall6(
+pub unsafe fn raw_syscall6(
     sysno: Sysno,
     arg0: usize,
     arg1: usize,
@@ -443,7 +427,7 @@ pub unsafe fn syscall6(
     arg3: usize,
     arg4: usize,
     arg5: usize,
-) -> Result<usize, Errno> {
+) -> usize {
     if callee() == 0 {
         let ret;
         // Similary to syscall4/5, we need to put arg3 in esi and arg5 in ebp but
@@ -467,14 +451,14 @@ pub unsafe fn syscall6(
             in("edi") arg4,
             options(preserves_flags)
         );
-        Errno::from_ret(ret)
+        ret
     } else {
         vsyscall6(sysno, arg0, arg1, arg2, arg3, arg4, arg5)
     }
 }
 
 #[allow(clippy::missing_safety_doc)]
-pub unsafe fn syscall6_readonly(
+pub unsafe fn raw_syscall6_readonly(
     sysno: Sysno,
     arg0: usize,
     arg1: usize,
@@ -482,7 +466,7 @@ pub unsafe fn syscall6_readonly(
     arg3: usize,
     arg4: usize,
     arg5: usize,
-) -> Result<usize, Errno> {
+) -> usize {
     if callee() == 0 {
         let ret;
         asm!(
@@ -501,11 +485,13 @@ pub unsafe fn syscall6_readonly(
             in("edi") arg4,
             options(preserves_flags, readonly)
         );
-        Errno::from_ret(ret)
+        ret
     } else {
         vsyscall6(sysno, arg0, arg1, arg2, arg3, arg4, arg5)
     }
 }
+
+include!("_syscalls.rs");
 
 #[inline(always)]
 pub(crate) fn x86_init(_: *const ()) {}

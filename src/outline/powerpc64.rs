@@ -1,9 +1,12 @@
 #[path = "common.rs"]
 mod common;
 pub use common::{
-    syscall0, syscall0_readonly, syscall1, syscall1_noreturn, syscall1_readonly, syscall2,
-    syscall2_readonly, syscall3, syscall3_readonly, syscall4, syscall4_readonly, syscall5,
-    syscall5_readonly, syscall6, syscall6_readonly,
+    raw_syscall0, raw_syscall0_readonly, raw_syscall1, raw_syscall1_readonly, raw_syscall2,
+    raw_syscall2_readonly, raw_syscall3, raw_syscall3_readonly, raw_syscall4,
+    raw_syscall4_readonly, raw_syscall5, raw_syscall5_readonly, raw_syscall6,
+    raw_syscall6_readonly, syscall0, syscall0_readonly, syscall1, syscall1_noreturn,
+    syscall1_readonly, syscall2, syscall2_readonly, syscall3, syscall3_readonly, syscall4,
+    syscall4_readonly, syscall5, syscall5_readonly, syscall6, syscall6_readonly,
 };
 
 extern "C" {
