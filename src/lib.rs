@@ -170,6 +170,8 @@ pub use arch::has_scv;
 
 /// Make a raw system call with 0 arguments.
 ///
+/// Returns a `Result<usize, Errno>`.
+///
 /// # Safety
 ///
 /// A system call is unsafe by definition.
@@ -177,6 +179,8 @@ pub use arch::has_scv;
 pub use arch::syscall0;
 
 /// Make a raw system call with 1 argument.
+///
+/// Returns a `Result<usize, Errno>`.
 ///
 /// # Safety
 ///
@@ -186,6 +190,8 @@ pub use arch::syscall1;
 
 /// Make a raw system call with 2 arguments.
 ///
+/// Returns a `Result<usize, Errno>`.
+///
 /// # Safety
 ///
 /// A system call is unsafe by definition.
@@ -193,6 +199,8 @@ pub use arch::syscall1;
 pub use arch::syscall2;
 
 /// Make a raw system call with 3 arguments.
+///
+/// Returns a `Result<usize, Errno>`.
 ///
 /// # Safety
 ///
@@ -202,6 +210,8 @@ pub use arch::syscall3;
 
 /// Make a raw system call with 4 arguments.
 ///
+/// Returns a `Result<usize, Errno>`.
+///
 /// # Safety
 ///
 /// A system call is unsafe by definition.
@@ -209,6 +219,8 @@ pub use arch::syscall3;
 pub use arch::syscall4;
 
 /// Make a raw system call with 5 arguments.
+///
+/// Returns a `Result<usize, Errno>`.
 ///
 /// # Safety
 ///
@@ -218,14 +230,29 @@ pub use arch::syscall5;
 
 /// Make a raw system call with 6 arguments.
 ///
+/// Returns a `Result<usize, Errno>`.
+///
 /// # Safety
 ///
 /// A system call is unsafe by definition.
 /// It's the caller's responsibility to ensure safety.
 pub use arch::syscall6;
 
+#[cfg(all(target_arch = "mips", target_pointer_width = "32"))]
+/// Make a raw system call with 7 arguments.
+///
+/// Returns a `Result<usize, Errno>`.
+///
+/// # Safety
+///
+/// A system call is unsafe by definition.
+/// It's the caller's responsibility to ensure safety.
+pub use arch::syscall7;
+
 /// Make a raw system call with 0 arguments.
 /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+///
+/// Returns a `Result<usize, Errno>`.
 ///
 /// # Safety
 ///
@@ -235,6 +262,8 @@ pub use arch::syscall0_readonly;
 
 /// Make a raw system call with 1 argument.
 /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+///
+/// Returns a `Result<usize, Errno>`.
 ///
 /// # Safety
 ///
@@ -254,6 +283,8 @@ pub use arch::syscall1_noreturn;
 /// Make a raw system call with 2 arguments.
 /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
 ///
+/// Returns a `Result<usize, Errno>`.
+///
 /// # Safety
 ///
 /// A system call is unsafe by definition.
@@ -262,6 +293,8 @@ pub use arch::syscall2_readonly;
 
 /// Make a raw system call with 3 arguments.
 /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+///
+/// Returns a `Result<usize, Errno>`.
 ///
 /// # Safety
 ///
@@ -272,6 +305,8 @@ pub use arch::syscall3_readonly;
 /// Make a raw system call with 4 arguments.
 /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
 ///
+/// Returns a `Result<usize, Errno>`.
+///
 /// # Safety
 ///
 /// A system call is unsafe by definition.
@@ -280,6 +315,8 @@ pub use arch::syscall4_readonly;
 
 /// Make a raw system call with 5 arguments.
 /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+///
+/// Returns a `Result<usize, Errno>`.
 ///
 /// # Safety
 ///
@@ -290,13 +327,29 @@ pub use arch::syscall5_readonly;
 /// Make a raw system call with 6 arguments.
 /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
 ///
+/// Returns a `Result<usize, Errno>`.
+///
 /// # Safety
 ///
 /// A system call is unsafe by definition.
 /// It's the caller's responsibility to ensure safety.
 pub use arch::syscall6_readonly;
 
+#[cfg(all(target_arch = "mips", target_pointer_width = "32"))]
+/// Make a raw system call with 7 arguments.
+/// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+///
+/// Returns a `Result<usize, Errno>`.
+///
+/// # Safety
+///
+/// A system call is unsafe by definition.
+/// It's the caller's responsibility to ensure safety.
+pub use arch::syscall7_readonly;
+
 /// Make a raw system call with 0 arguments.
+///
+/// Returns a raw `usize`, doesn't not check for errors.
 ///
 /// # Safety
 ///
@@ -306,6 +359,8 @@ pub use arch::raw_syscall0;
 
 /// Make a raw system call with 1 argument.
 ///
+/// Returns a raw `usize`, doesn't not check for errors.
+///
 /// # Safety
 ///
 /// A system call is unsafe by definition.
@@ -313,6 +368,8 @@ pub use arch::raw_syscall0;
 pub use arch::raw_syscall1;
 
 /// Make a raw system call with 2 arguments.
+///
+/// Returns a raw `usize`, doesn't not check for errors.
 ///
 /// # Safety
 ///
@@ -322,6 +379,8 @@ pub use arch::raw_syscall2;
 
 /// Make a raw system call with 3 arguments.
 ///
+/// Returns a raw `usize`, doesn't not check for errors.
+///
 /// # Safety
 ///
 /// A system call is unsafe by definition.
@@ -329,6 +388,8 @@ pub use arch::raw_syscall2;
 pub use arch::raw_syscall3;
 
 /// Make a raw system call with 4 arguments.
+///
+/// Returns a raw `usize`, doesn't not check for errors.
 ///
 /// # Safety
 ///
@@ -338,6 +399,8 @@ pub use arch::raw_syscall4;
 
 /// Make a raw system call with 5 arguments.
 ///
+/// Returns a raw `usize`, doesn't not check for errors.
+///
 /// # Safety
 ///
 /// A system call is unsafe by definition.
@@ -346,14 +409,29 @@ pub use arch::raw_syscall5;
 
 /// Make a raw system call with 6 arguments.
 ///
+/// Returns a raw `usize`, doesn't not check for errors.
+///
 /// # Safety
 ///
 /// A system call is unsafe by definition.
 /// It's the caller's responsibility to ensure safety.
 pub use arch::raw_syscall6;
 
+#[cfg(all(target_arch = "mips", target_pointer_width = "32"))]
+/// Make a raw system call with 7 arguments.
+///
+/// Returns a raw `usize`, doesn't not check for errors.
+///
+/// # Safety
+///
+/// A system call is unsafe by definition.
+/// It's the caller's responsibility to ensure safety.
+pub use arch::raw_syscall7;
+
 /// Make a raw system call with 0 arguments.
 /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+///
+/// Returns a raw `usize`, doesn't not check for errors.
 ///
 /// # Safety
 ///
@@ -364,6 +442,8 @@ pub use arch::raw_syscall0_readonly;
 /// Make a raw system call with 1 argument.
 /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
 ///
+/// Returns a raw `usize`, doesn't not check for errors.
+///
 /// # Safety
 ///
 /// A system call is unsafe by definition.
@@ -372,6 +452,8 @@ pub use arch::raw_syscall1_readonly;
 
 /// Make a raw system call with 2 arguments.
 /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+///
+/// Returns a raw `usize`, doesn't not check for errors.
 ///
 /// # Safety
 ///
@@ -382,6 +464,8 @@ pub use arch::raw_syscall2_readonly;
 /// Make a raw system call with 3 arguments.
 /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
 ///
+/// Returns a raw `usize`, doesn't not check for errors.
+///
 /// # Safety
 ///
 /// A system call is unsafe by definition.
@@ -390,6 +474,8 @@ pub use arch::raw_syscall3_readonly;
 
 /// Make a raw system call with 4 arguments.
 /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+///
+/// Returns a raw `usize`, doesn't not check for errors.
 ///
 /// # Safety
 ///
@@ -400,6 +486,8 @@ pub use arch::raw_syscall4_readonly;
 /// Make a raw system call with 5 arguments.
 /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
 ///
+/// Returns a raw `usize`, doesn't not check for errors.
+///
 /// # Safety
 ///
 /// A system call is unsafe by definition.
@@ -408,6 +496,8 @@ pub use arch::raw_syscall5_readonly;
 
 /// Make a raw system call with 6 arguments.
 /// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
+///
+/// Returns a raw `usize`, doesn't not check for errors.
 ///
 /// # Safety
 ///
@@ -418,36 +508,10 @@ pub use arch::raw_syscall6_readonly;
 #[cfg(all(target_arch = "mips", target_pointer_width = "32"))]
 /// Make a raw system call with 7 arguments.
 ///
-/// # Safety
-///
-/// A system call is unsafe by definition.
-/// It's the caller's responsibility to ensure safety.
-pub use arch::raw_syscall7;
-
-#[cfg(all(target_arch = "mips", target_pointer_width = "32"))]
-/// Make a raw system call with 7 arguments.
+/// Returns a raw `usize`, doesn't not check for errors.
 ///
 /// # Safety
 ///
 /// A system call is unsafe by definition.
 /// It's the caller's responsibility to ensure safety.
 pub use arch::raw_syscall7_readonly;
-
-#[cfg(all(target_arch = "mips", target_pointer_width = "32"))]
-/// Make a raw system call with 7 arguments.
-///
-/// # Safety
-///
-/// A system call is unsafe by definition.
-/// It's the caller's responsibility to ensure safety.
-pub use arch::syscall7;
-
-#[cfg(all(target_arch = "mips", target_pointer_width = "32"))]
-/// Make a raw system call with 7 arguments.
-/// Like the non `_readonly` version but you declare that syscall does not mutate any memory.
-///
-/// # Safety
-///
-/// A system call is unsafe by definition.
-/// It's the caller's responsibility to ensure safety.
-pub use arch::syscall7_readonly;

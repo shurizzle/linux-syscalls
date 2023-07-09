@@ -1,11 +1,11 @@
 /// Make a syscall and returns a `Result<usize, Errno>`
 ///
-/// Accept a [crate::Sysno] as the first parameter and a variable number of arguments (0 to 6).
+/// Accept a [`Sysno`] as the first parameter and a variable number of arguments (0 to 6).
 /// It calls syscallN under the hood where N is the number of arguments.
 ///
 /// The are two variations:
 /// - `[ro]`: use the `_readonly` version of `syscallN`.
-/// - `[!]`: use the `_noreturn` version of `syscall1` (useful for [crate::Sysno::exit]).
+/// - `[!]`: use the `_noreturn` version of `syscall1` (useful for [`exit`]).
 ///
 /// Use the previous tags if you what are you doing, otherwise you can omit them.
 ///
@@ -29,6 +29,9 @@
 /// // [!] because exit do not return.
 /// unsafe { syscall!([!] Sysno::exit, 0) };
 /// ```
+///
+/// [`Sysno`]: crate::Sysno
+/// [`exit`]: crate::Sysno::exit
 #[macro_export]
 macro_rules! syscall {
     ([ro] $sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr, $arg5:expr $(,)?) => {
@@ -120,37 +123,30 @@ macro_rules! syscall {
     };
 }
 
-/// Make a syscall and returns a `Result<usize, Errno>`
+/// Make a syscall and returns a `usize`
 ///
-/// Accept a [crate::Sysno] as the first parameter and a variable number of arguments (0 to 6).
+/// Accept a [`Sysno`] as the first parameter and a variable number of arguments (0 to 6).
 /// It calls syscallN under the hood where N is the number of arguments.
 ///
 /// The are two variations:
-/// - `[ro]`: use the `_readonly` version of `syscallN`.
-/// - `[!]`: use the `_noreturn` version of `syscall1` (useful for [crate::Sysno::exit]).
+/// - `[ro]`: use the `_readonly` version of `raw_syscallN`.
+/// - `[!]`: use the `_noreturn` version of `syscall1` (useful for [`exit`]).
 ///
 /// Use the previous tags if you what are you doing, otherwise you can omit them.
 ///
 /// # Example
 ///
 /// ```
-/// use linux_syscalls::{Errno, Sysno, syscall};
+/// use linux_syscalls::{Sysno, raw_syscall};
 ///
-/// let mut buf: [u8; 1024] = [0; 1024];
-/// let buf = loop {
-///     match unsafe { syscall!(Sysno::read, 0, buf.as_mut_ptr(), buf.len()) } {
-///         Ok(n) => break &buf[..n],
-///         Err(Errno::EINTR) => (),
-///         Err(err) => return Err(err),
-///     }
-/// };
-///
-/// // [ro] because write do not change the memory.
-/// unsafe { syscall!([ro] Sysno::write, 1, buf.as_ptr(), buf.len())? };
+/// println!("{}", raw_syscall!([ro] Sysno::brk, 0));
 ///
 /// // [!] because exit do not return.
-/// unsafe { syscall!([!] Sysno::exit, 0) };
+/// unsafe { raw_syscall!([!] Sysno::exit, 0) };
 /// ```
+///
+/// [`Sysno`]: crate::Sysno
+/// [`exit`]: crate::Sysno::exit
 #[macro_export]
 macro_rules! raw_syscall {
     ([ro] $sysno:expr, $arg0:expr, $arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr, $arg5:expr $(,)?) => {
